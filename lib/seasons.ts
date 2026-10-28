@@ -1,0 +1,515 @@
+export type Swatch = { name: string; hex: string };
+
+export type Family = "Spring" | "Summer" | "Autumn" | "Winter";
+
+export type Season = {
+  slug: string;
+  name: string;
+  family: Family;
+  emoji: string;
+  tagline: string;
+  description: string;
+  undertone: "Warm" | "Cool" | "Neutral-warm" | "Neutral-cool";
+  depth: "Light" | "Medium" | "Deep" | "Light to medium" | "Medium to deep";
+  contrast: "Low" | "Medium" | "High";
+  palette: Swatch[];
+  avoid: Swatch[];
+  metals: string;
+  neutrals: string;
+  makeup: string[];
+  style: string[];
+};
+
+export const seasons: Season[] = [
+  {
+    slug: "light-spring",
+    name: "Light Spring",
+    family: "Spring",
+    emoji: "🌼",
+    tagline: "Fresh, sunny and delicate",
+    description:
+      "Light Springs glow in airy, warm-leaning colors that feel like a sunny morning. Your features are soft and light, so gentle brights and creamy pastels make you look rested and radiant.",
+    undertone: "Neutral-warm",
+    depth: "Light",
+    contrast: "Low",
+    palette: [
+      { name: "Peach Sorbet", hex: "#FFB59A" },
+      { name: "Buttercup", hex: "#FFE17A" },
+      { name: "Mint Leaf", hex: "#A8E6C1" },
+      { name: "Aqua Mist", hex: "#7FD8D2" },
+      { name: "Warm Coral", hex: "#FF8C7A" },
+      { name: "Periwinkle", hex: "#A3B4F5" },
+      { name: "Light Camel", hex: "#D9B48F" },
+      { name: "Ivory", hex: "#FFF8E7" },
+    ],
+    avoid: [
+      { name: "Black", hex: "#111111" },
+      { name: "Burgundy", hex: "#6B1E2E" },
+      { name: "Charcoal", hex: "#36393F" },
+      { name: "Dusty Mauve", hex: "#8E6E7E" },
+    ],
+    metals: "Light gold, rose gold",
+    neutrals: "Ivory, light camel, soft warm grey, light navy",
+    makeup: [
+      "Peach or apricot blush with a sheer finish",
+      "Coral-pink or warm nude lips",
+      "Soft brown or bronze eyeliner instead of black",
+    ],
+    style: [
+      "Swap black for light navy or warm grey",
+      "Keep contrast gentle — tonal outfits look effortless on you",
+      "Cream and ivory flatter more than stark white",
+    ],
+  },
+  {
+    slug: "warm-spring",
+    name: "Warm Spring",
+    family: "Spring",
+    emoji: "🌻",
+    tagline: "Golden, lively and sun-kissed",
+    description:
+      "Warm Springs are all about golden warmth. Clear, cheerful colors with a yellow base bring out the glow in your skin and the sparkle in your eyes.",
+    undertone: "Warm",
+    depth: "Light to medium",
+    contrast: "Medium",
+    palette: [
+      { name: "Marigold", hex: "#F7A21B" },
+      { name: "Tomato Red", hex: "#E5462D" },
+      { name: "Leaf Green", hex: "#5DBB46" },
+      { name: "Turquoise", hex: "#1FB5AD" },
+      { name: "Golden Yellow", hex: "#FFC93C" },
+      { name: "Warm Coral", hex: "#FF7F61" },
+      { name: "Camel", hex: "#C19A6B" },
+      { name: "Cream", hex: "#FFF1D6" },
+    ],
+    avoid: [
+      { name: "Icy Pink", hex: "#F4D9E8" },
+      { name: "Blue-Grey", hex: "#7D8B9C" },
+      { name: "Black", hex: "#111111" },
+      { name: "Fuchsia", hex: "#C71585" },
+    ],
+    metals: "Yellow gold, brass",
+    neutrals: "Camel, warm beige, golden brown, cream",
+    makeup: [
+      "Bronzer and peachy blush for a healthy glow",
+      "Coral, warm red or golden-nude lipstick",
+      "Gold or copper eyeshadow shimmer",
+    ],
+    style: [
+      "Camel coats and golden-brown leather are your power neutrals",
+      "Bring color near your face with scarves and tops",
+      "Choose cream or warm white over bright white",
+    ],
+  },
+  {
+    slug: "bright-spring",
+    name: "Bright Spring",
+    family: "Spring",
+    emoji: "🌈",
+    tagline: "Vivid, clear and electric",
+    description:
+      "Bright Springs can wear saturated, high-energy colors that would overwhelm other seasons. Your coloring has sparkle and contrast, so clear brights make you look vibrant.",
+    undertone: "Neutral-warm",
+    depth: "Medium",
+    contrast: "High",
+    palette: [
+      { name: "Hot Coral", hex: "#FF5A5F" },
+      { name: "Bright Turquoise", hex: "#00C2C7" },
+      { name: "Lime", hex: "#9BE33B" },
+      { name: "Sunflower", hex: "#FFD12A" },
+      { name: "Warm Fuchsia", hex: "#F0388E" },
+      { name: "Royal Blue", hex: "#2F5BEA" },
+      { name: "Bright Navy", hex: "#1D3A8A" },
+      { name: "Clear White", hex: "#FBFBFB" },
+    ],
+    avoid: [
+      { name: "Dusty Rose", hex: "#C9A1A1" },
+      { name: "Olive", hex: "#6B6B3A" },
+      { name: "Taupe", hex: "#8B7D70" },
+      { name: "Mauve", hex: "#9E7B8F" },
+    ],
+    metals: "Polished gold, bright silver",
+    neutrals: "Bright navy, charcoal, clear white, warm grey",
+    makeup: [
+      "Clear coral or watermelon lips",
+      "Defined liner — you can handle the contrast",
+      "Fresh, glowy skin rather than matte",
+    ],
+    style: [
+      "Pair a bright with a crisp neutral for instant polish",
+      "Avoid head-to-toe muted tones — they dull your sparkle",
+      "Color-blocking is your friend",
+    ],
+  },
+  {
+    slug: "light-summer",
+    name: "Light Summer",
+    family: "Summer",
+    emoji: "🌸",
+    tagline: "Airy, cool and gentle",
+    description:
+      "Light Summers shine in soft, cool pastels with a whisper of grey. Your coloring is light and delicate, so powdery shades look calm and luminous on you.",
+    undertone: "Neutral-cool",
+    depth: "Light",
+    contrast: "Low",
+    palette: [
+      { name: "Powder Blue", hex: "#A7C7E7" },
+      { name: "Lavender", hex: "#C3B1E1" },
+      { name: "Rose Pink", hex: "#F4A7B9" },
+      { name: "Seafoam", hex: "#9FD8CB" },
+      { name: "Soft Lilac", hex: "#D6C1F0" },
+      { name: "Sky Blue", hex: "#87B9E8" },
+      { name: "Dove Grey", hex: "#B8B8C4" },
+      { name: "Soft White", hex: "#F7F7FA" },
+    ],
+    avoid: [
+      { name: "Orange", hex: "#F57C00" },
+      { name: "Black", hex: "#111111" },
+      { name: "Mustard", hex: "#C9A227" },
+      { name: "Rust", hex: "#A0461E" },
+    ],
+    metals: "Silver, white gold, rose gold",
+    neutrals: "Soft white, dove grey, light navy, cool taupe",
+    makeup: [
+      "Cool pink or rosy blush",
+      "Sheer berry or rose lip tints",
+      "Taupe or soft grey liner",
+    ],
+    style: [
+      "Light navy and soft grey replace black beautifully",
+      "Tone-on-tone pastels look elegant and intentional",
+      "Choose matte or pearly textures over high shine",
+    ],
+  },
+  {
+    slug: "cool-summer",
+    name: "Cool Summer",
+    family: "Summer",
+    emoji: "🌊",
+    tagline: "Cool, calm and refined",
+    description:
+      "Cool Summers look best in blue-based colors with a soft, elegant feel. Think ocean blues, raspberry and rose — never too loud, always cool.",
+    undertone: "Cool",
+    depth: "Light to medium",
+    contrast: "Medium",
+    palette: [
+      { name: "Ocean Blue", hex: "#4A7FB5" },
+      { name: "Raspberry", hex: "#C2386B" },
+      { name: "Soft Teal", hex: "#4E9A9A" },
+      { name: "Cool Rose", hex: "#E58FB0" },
+      { name: "Periwinkle", hex: "#8C9EDB" },
+      { name: "Plum", hex: "#7D4E7D" },
+      { name: "Slate Grey", hex: "#6E7B8B" },
+      { name: "Soft White", hex: "#F5F6FA" },
+    ],
+    avoid: [
+      { name: "Orange", hex: "#F57C00" },
+      { name: "Camel", hex: "#C19A6B" },
+      { name: "Olive", hex: "#6B6B3A" },
+      { name: "Golden Yellow", hex: "#FFC93C" },
+    ],
+    metals: "Silver, platinum, white gold",
+    neutrals: "Slate grey, navy, cool taupe, soft white",
+    makeup: [
+      "Rose or berry lipstick",
+      "Cool pink blush",
+      "Grey, navy or plum eyeliner",
+    ],
+    style: [
+      "Navy and slate are your go-to neutrals",
+      "Blue denim in mid-washes looks great on you",
+      "Pair soft cool colors together for a polished look",
+    ],
+  },
+  {
+    slug: "soft-summer",
+    name: "Soft Summer",
+    family: "Summer",
+    emoji: "🌫️",
+    tagline: "Muted, dreamy and sophisticated",
+    description:
+      "Soft Summers glow in gentle, greyed colors. Your features blend softly, so dusty, smoky shades look harmonious while harsh brights can feel loud.",
+    undertone: "Neutral-cool",
+    depth: "Medium",
+    contrast: "Low",
+    palette: [
+      { name: "Dusty Rose", hex: "#C9A1A8" },
+      { name: "Sage", hex: "#9CAF94" },
+      { name: "Smoky Blue", hex: "#7D93A8" },
+      { name: "Mauve", hex: "#9E7B8F" },
+      { name: "Soft Teal", hex: "#6F9C9A" },
+      { name: "Heather", hex: "#A897B5" },
+      { name: "Rose Taupe", hex: "#9A8582" },
+      { name: "Oyster", hex: "#E6E1DA" },
+    ],
+    avoid: [
+      { name: "Neon Pink", hex: "#FF2E93" },
+      { name: "Bright Orange", hex: "#FF6F00" },
+      { name: "Pure Black", hex: "#000000" },
+      { name: "Lemon", hex: "#FFF44F" },
+    ],
+    metals: "Brushed silver, pewter, soft rose gold",
+    neutrals: "Rose taupe, oyster, charcoal blue, soft grey",
+    makeup: [
+      "Mauve or rosewood lips",
+      "Soft, diffused blush",
+      "Smoky taupe eyeshadow instead of black",
+    ],
+    style: [
+      "Blend colors in the same family for a dreamy look",
+      "Heathered and textured fabrics suit your softness",
+      "Charcoal and soft navy beat jet black",
+    ],
+  },
+  {
+    slug: "soft-autumn",
+    name: "Soft Autumn",
+    family: "Autumn",
+    emoji: "🍂",
+    tagline: "Warm, mellow and earthy",
+    description:
+      "Soft Autumns look lovely in warm, muted earth tones — like a misty forest in early fall. Gentle colors with a golden touch keep you looking natural and glowing.",
+    undertone: "Neutral-warm",
+    depth: "Medium",
+    contrast: "Low",
+    palette: [
+      { name: "Olive", hex: "#8A8B5C" },
+      { name: "Salmon", hex: "#E39B83" },
+      { name: "Moss", hex: "#7E8F5A" },
+      { name: "Warm Teal", hex: "#5F8F86" },
+      { name: "Soft Terracotta", hex: "#C1785C" },
+      { name: "Khaki", hex: "#BDAE85" },
+      { name: "Mushroom", hex: "#A48F7C" },
+      { name: "Oatmeal", hex: "#E8DCC6" },
+    ],
+    avoid: [
+      { name: "Icy Blue", hex: "#CFE8FF" },
+      { name: "Hot Pink", hex: "#FF3EA5" },
+      { name: "Black", hex: "#111111" },
+      { name: "Royal Blue", hex: "#2F5BEA" },
+    ],
+    metals: "Antique gold, bronze, brushed gold",
+    neutrals: "Oatmeal, mushroom, soft brown, olive",
+    makeup: [
+      "Peachy-nude or soft brick lips",
+      "Warm, muted blush in apricot or rosewood",
+      "Olive or bronze eyeshadow",
+    ],
+    style: [
+      "Earthy neutrals like oatmeal and mushroom are your base",
+      "Mix textures — suede, knits and linen look great",
+      "Keep contrast low and blended",
+    ],
+  },
+  {
+    slug: "warm-autumn",
+    name: "Warm Autumn",
+    family: "Autumn",
+    emoji: "🎃",
+    tagline: "Rich, golden and spicy",
+    description:
+      "Warm Autumns radiate in rich, spicy colors with a strong golden base. Think pumpkin, mustard and forest green — colors as cozy as a fall afternoon.",
+    undertone: "Warm",
+    depth: "Medium to deep",
+    contrast: "Medium",
+    palette: [
+      { name: "Pumpkin", hex: "#D96C1E" },
+      { name: "Mustard", hex: "#D4A017" },
+      { name: "Forest Green", hex: "#3F6B3A" },
+      { name: "Rust", hex: "#A0461E" },
+      { name: "Teal", hex: "#2E7D74" },
+      { name: "Paprika", hex: "#B8432F" },
+      { name: "Chocolate", hex: "#5C3A21" },
+      { name: "Warm Cream", hex: "#F3E3C3" },
+    ],
+    avoid: [
+      { name: "Icy Pink", hex: "#F4D9E8" },
+      { name: "Silver Grey", hex: "#C0C0C8" },
+      { name: "Fuchsia", hex: "#C71585" },
+      { name: "Pure White", hex: "#FFFFFF" },
+    ],
+    metals: "Yellow gold, copper, bronze",
+    neutrals: "Chocolate, camel, olive, warm cream",
+    makeup: [
+      "Brick, terracotta or warm red lips",
+      "Bronze and copper eyeshadow",
+      "Warm brown liner and mascara",
+    ],
+    style: [
+      "Chocolate brown is a softer alternative to black",
+      "Rich textures like corduroy and leather suit you",
+      "Gold jewelry adds instant warmth",
+    ],
+  },
+  {
+    slug: "deep-autumn",
+    name: "Deep Autumn",
+    family: "Autumn",
+    emoji: "🍁",
+    tagline: "Deep, warm and dramatic",
+    description:
+      "Deep Autumns wear rich, dark, warm colors with ease. Your depth lets you carry intense shades like espresso, deep teal and burgundy beautifully.",
+    undertone: "Neutral-warm",
+    depth: "Deep",
+    contrast: "High",
+    palette: [
+      { name: "Espresso", hex: "#3B2416" },
+      { name: "Deep Teal", hex: "#1F5C5A" },
+      { name: "Burnt Orange", hex: "#C1501E" },
+      { name: "Burgundy", hex: "#6E1F2B" },
+      { name: "Olive Green", hex: "#4F5A23" },
+      { name: "Gold", hex: "#C9962B" },
+      { name: "Aubergine", hex: "#4B2340" },
+      { name: "Warm Ivory", hex: "#F2E6CF" },
+    ],
+    avoid: [
+      { name: "Pastel Pink", hex: "#F8C8DC" },
+      { name: "Baby Blue", hex: "#BFDFFF" },
+      { name: "Silver Grey", hex: "#C0C0C8" },
+      { name: "Lavender", hex: "#C3B1E1" },
+    ],
+    metals: "Antique gold, bronze, copper",
+    neutrals: "Espresso, dark olive, warm charcoal, ivory",
+    makeup: [
+      "Deep brick, chocolate or wine lips",
+      "Rich bronze and plum eyeshadows",
+      "Defined brows and dark brown liner",
+    ],
+    style: [
+      "Dark warm neutrals look luxurious on you",
+      "Jewel-toned accents with a warm base pop beautifully",
+      "Avoid washed-out pastels near your face",
+    ],
+  },
+  {
+    slug: "deep-winter",
+    name: "Deep Winter",
+    family: "Winter",
+    emoji: "🌌",
+    tagline: "Bold, deep and striking",
+    description:
+      "Deep Winters own dark, cool and intense colors. Your strong coloring is balanced by black, jewel tones and crisp white — drama suits you.",
+    undertone: "Neutral-cool",
+    depth: "Deep",
+    contrast: "High",
+    palette: [
+      { name: "Black", hex: "#111111" },
+      { name: "Emerald", hex: "#047857" },
+      { name: "Ruby", hex: "#9B1B30" },
+      { name: "Sapphire", hex: "#1E3A8A" },
+      { name: "Deep Plum", hex: "#5B2160" },
+      { name: "Pine", hex: "#1F4D3A" },
+      { name: "Cool Red", hex: "#C8102E" },
+      { name: "Crisp White", hex: "#FAFAFA" },
+    ],
+    avoid: [
+      { name: "Peach", hex: "#FFC8A2" },
+      { name: "Camel", hex: "#C19A6B" },
+      { name: "Mustard", hex: "#C9A227" },
+      { name: "Dusty Rose", hex: "#C9A1A1" },
+    ],
+    metals: "Silver, platinum, gunmetal",
+    neutrals: "Black, charcoal, deep navy, crisp white",
+    makeup: [
+      "Berry, wine or true red lips",
+      "Black or deep plum liner",
+      "Cool-toned contour and blush",
+    ],
+    style: [
+      "Black and white combos look sharp and intentional",
+      "Jewel tones are your statement colors",
+      "Keep pastels away from your face",
+    ],
+  },
+  {
+    slug: "cool-winter",
+    name: "Cool Winter",
+    family: "Winter",
+    emoji: "❄️",
+    tagline: "Icy, clear and elegant",
+    description:
+      "Cool Winters look best in pure, blue-based colors with plenty of clarity. Icy shades, true jewel tones and crisp contrasts make your features stand out.",
+    undertone: "Cool",
+    depth: "Medium to deep",
+    contrast: "High",
+    palette: [
+      { name: "True Blue", hex: "#1F4FD8" },
+      { name: "Magenta", hex: "#C2185B" },
+      { name: "Icy Lavender", hex: "#DCD3F5" },
+      { name: "Pine Green", hex: "#0F6B53" },
+      { name: "Blue Red", hex: "#C8102E" },
+      { name: "Icy Blue", hex: "#CFE8FF" },
+      { name: "Charcoal", hex: "#36393F" },
+      { name: "Snow White", hex: "#FFFFFF" },
+    ],
+    avoid: [
+      { name: "Orange", hex: "#F57C00" },
+      { name: "Gold", hex: "#C9962B" },
+      { name: "Warm Beige", hex: "#D8C3A5" },
+      { name: "Olive", hex: "#6B6B3A" },
+    ],
+    metals: "Silver, platinum, white gold",
+    neutrals: "Charcoal, navy, black, pure white",
+    makeup: [
+      "Fuchsia, berry or blue-red lips",
+      "Cool pink or plum blush",
+      "Crisp black or navy liner",
+    ],
+    style: [
+      "Pair icy shades with charcoal for an elegant look",
+      "Silver jewelry is your best friend",
+      "Crisp, clean lines echo your clear coloring",
+    ],
+  },
+  {
+    slug: "bright-winter",
+    name: "Bright Winter",
+    family: "Winter",
+    emoji: "💎",
+    tagline: "Brilliant, cool and dazzling",
+    description:
+      "Bright Winters can handle the most vivid colors of all. Your coloring is clear and high-contrast, so electric jewel tones and stark black-and-white make you dazzle.",
+    undertone: "Neutral-cool",
+    depth: "Medium",
+    contrast: "High",
+    palette: [
+      { name: "Electric Blue", hex: "#0066FF" },
+      { name: "Hot Pink", hex: "#FF1F8E" },
+      { name: "Emerald", hex: "#00A86B" },
+      { name: "Lemon", hex: "#FFF44F" },
+      { name: "Violet", hex: "#7C3AED" },
+      { name: "True Red", hex: "#E0112B" },
+      { name: "Black", hex: "#111111" },
+      { name: "Optic White", hex: "#FFFFFF" },
+    ],
+    avoid: [
+      { name: "Camel", hex: "#C19A6B" },
+      { name: "Dusty Sage", hex: "#9CAF94" },
+      { name: "Mushroom", hex: "#A48F7C" },
+      { name: "Rust", hex: "#A0461E" },
+    ],
+    metals: "Bright silver, platinum",
+    neutrals: "Black, optic white, charcoal, true navy",
+    makeup: [
+      "Bold fuchsia, cherry or true red lips",
+      "Sharp liner and defined lashes",
+      "Clear, bright blush in cool pink",
+    ],
+    style: [
+      "High contrast outfits are your signature",
+      "One electric color plus black or white always works",
+      "Avoid muddy, muted tones near your face",
+    ],
+  },
+];
+
+export const families: { family: Family; blurb: string }[] = [
+  { family: "Spring", blurb: "Warm and clear" },
+  { family: "Summer", blurb: "Cool and soft" },
+  { family: "Autumn", blurb: "Warm and muted" },
+  { family: "Winter", blurb: "Cool and vivid" },
+];
+
+export function getSeason(slug: string) {
+  return seasons.find((s) => s.slug === slug);
+}

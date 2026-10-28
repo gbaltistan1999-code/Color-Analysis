@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Design tokens. Light is the default; [data-theme="dark"] swaps them. */
+:root {
+  --bg: #fdfbff;
+  --surface: #ffffff;
+  --surface-2: #f5f3ff;
+  --text: #1e1433;
+  --muted: #5b5170; /* 7.4:1 on white */
+  --primary: #7c3aed; /* 5.7:1 on white, 5.2:1 on --surface-2 */
+  --primary-strong: #6d28d9;
+  --primary-soft: #ede9fe;
+  --on-primary: #ffffff;
+  --border: #e9e3f7;
+  --pink: #f9a8d4;
+  --peach: #fdba8c;
+  --ring: #7c3aed;
+  --shadow: 0 10px 30px -12px rgb(76 29 149 / 0.22);
+  --grad-hero: linear-gradient(135deg, #ede9fe 0%, #fce7f3 55%, #ffedd5 100%);
+  --grad-cta: linear-gradient(120deg, #7c3aed 0%, #a21caf 55%, #db2777 100%);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #120c1f;
+  --surface: #1c1430;
+  --surface-2: #241a3d;
+  --text: #f4efff;
+  --muted: #c3b8dc;
+  --primary: #c4b5fd; /* used as text/accents in dark mode: 9.6:1 on --surface */
+  --primary-strong: #ddd6fe;
+  --primary-soft: #2e2150;
+  --on-primary: #1e1433;
+  --border: #33275a;
+  --pink: #f472b6;
+  --peach: #fb923c;
+  --ring: #c4b5fd;
+  --shadow: 0 10px 30px -12px rgb(0 0 0 / 0.6);
+  --grad-hero: linear-gradient(135deg, #1f1538 0%, #2a1532 55%, #2b1a1a 100%);
+  --grad-cta: linear-gradient(120deg, #5b21b6 0%, #86198f 55%, #9d174d 100%);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+  --color-line: var(--border);
+  --color-pink: var(--pink);
+  --color-peach: var(--peach);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-semibold shadow-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0;
+    background: #7c3aed;
+    color: #fff;
+    box-shadow: 0 10px 24px -10px rgb(124 58 237 / 0.7);
+  }
+  .btn-primary:hover {
+    background: #6d28d9;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-6 py-3 font-semibold text-ink transition duration-200 hover:-translate-y-0.5 hover:border-primary;
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-surface;
+    box-shadow: var(--shadow);
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full bg-primary-soft px-3 py-1 text-sm font-semibold text-primary;
+  }
+  .section-title {
+    @apply text-3xl font-bold sm:text-4xl;
+  }
+}
+
+/* Decorative motion — all disabled under prefers-reduced-motion. */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translateY(-10px) rotate(var(--r, 0deg));
+  }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes burst {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1) rotate(var(--rot));
+    opacity: 0;
+  }
+}
+.swatch-burst {
+  animation: burst 1.4s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes reveal {
+  from {
+    transform: translateY(16px) scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.animate-reveal {
+  animation: reveal 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .swatch-burst {
+    display: none;
+  }
+}
