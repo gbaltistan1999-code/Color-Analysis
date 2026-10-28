@@ -1,7 +1,8 @@
 import Link from "next/link";
 import FAQ, { type FaqItem } from "@/components/FAQ";
 import SeasonCard from "@/components/SeasonCard";
-import { DrapedFace, HeroIllustration, PaletteStrip } from "@/components/Illustrations";
+import DrapeComparison from "@/components/DrapeComparison";
+import { HeroIllustration, PaletteStrip } from "@/components/Illustrations";
 import {
   IconArrow,
   IconBolt,
@@ -221,26 +222,7 @@ export default function Home() {
               The right shade near your face can brighten skin and soften shadows. The wrong one can make you look tired.
             </p>
           </div>
-          <div className="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2">
-            <figure className="card overflow-hidden">
-              <div className="bg-gradient-to-b from-[#fdf2f8] to-[#ede9fe] px-8 pt-8 dark:from-[#2a1a3a] dark:to-[#241a3d]">
-                <DrapedFace drape="#E58FB0" drapeShade="#C2386B" mood="glow" title="Face with a flattering rose drape" />
-              </div>
-              <figcaption className="p-5">
-                <p className="flex items-center gap-2 font-bold text-[#15803d] dark:text-[#4ade80]">✓ Flattering drape</p>
-                <p className="mt-1 text-sm text-muted">Skin looks even and bright, eyes stand out, a natural rosy glow.</p>
-              </figcaption>
-            </figure>
-            <figure className="card overflow-hidden">
-              <div className="bg-gradient-to-b from-[#f5f5f4] to-[#e7e5e4] px-8 pt-8 dark:from-[#26222b] dark:to-[#1f1b24]">
-                <DrapedFace drape="#C9A227" drapeShade="#8A6E12" mood="dull" title="Same face with an unflattering mustard drape" />
-              </div>
-              <figcaption className="p-5">
-                <p className="flex items-center gap-2 font-bold text-[#b91c1c] dark:text-[#f87171]">✗ Unflattering drape</p>
-                <p className="mt-1 text-sm text-muted">Skin looks sallow, shadows deepen under the eyes and around the mouth.</p>
-              </figcaption>
-            </figure>
-          </div>
+          <DrapeComparison />
         </div>
       </section>
 
