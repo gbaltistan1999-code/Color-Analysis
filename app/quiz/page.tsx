@@ -3,16 +3,13 @@ import Quiz from "@/components/Quiz";
 
 export const metadata: Metadata = {
   title: "Color Analysis Quiz",
-  description: "Nine quick questions to find your color season, undertone and personal palette. Free and private.",
+  description:
+    "A free 3-minute color analysis quiz with an optional private selfie check. Get your season, undertone, palette with HEX codes and style tips.",
 };
 
 export default function QuizPage() {
   return (
-    <section className="min-h-[80vh] px-4 py-12 sm:py-16" style={{ background: "var(--grad-hero)" }}>
-      <div className="mx-auto mb-8 max-w-2xl text-center">
-        <h1 className="text-3xl font-extrabold sm:text-4xl">Your Color Analysis Quiz 🎨</h1>
-        <p className="mt-3 text-muted">Go with your first instinct — you can always go back.</p>
-      </div>
+    <section className="min-h-[80vh] px-4 py-8 sm:py-12" style={{ background: "var(--grad-hero)" }}>
       <Quiz />
     </section>
   );

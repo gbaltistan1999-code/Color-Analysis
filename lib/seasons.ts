@@ -510,6 +510,25 @@ export const families: { family: Family; blurb: string }[] = [
   { family: "Winter", blurb: "Cool and vivid" },
 ];
 
+export const familyExtras: Record<Family, { hair: string; accessories: string }> = {
+  Spring: {
+    hair: "Golden blonde, honey, strawberry and warm light browns. Avoid ashy or blue-black dyes.",
+    accessories: "Light gold and tortoiseshell in honey tones; sunglasses with warm brown or amber lenses.",
+  },
+  Summer: {
+    hair: "Ash blonde, cool light-to-medium brown and soft rose-brown. Skip brassy copper and gold tones.",
+    accessories: "Silver, rose gold and pearls; frames in grey, soft rose or translucent tones with grey lenses.",
+  },
+  Autumn: {
+    hair: "Copper, auburn, chestnut and warm chocolate. Steer away from icy platinum and blue-black.",
+    accessories: "Brass, bronze and dark tortoiseshell; brown, olive or amber sunglass lenses.",
+  },
+  Winter: {
+    hair: "Espresso, blue-black and cool dark brown; icy platinum for a bold look. Avoid golden highlights.",
+    accessories: "Silver and platinum; black, clear or jewel-toned frames with grey lenses.",
+  },
+};
+
 export function getSeason(slug: string) {
   return seasons.find((s) => s.slug === slug);
 }
