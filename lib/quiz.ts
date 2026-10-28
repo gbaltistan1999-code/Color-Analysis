@@ -128,12 +128,12 @@ export const questions: Question[] = [
     select: "single",
     layout: "tiles",
     answers: [
-      { id: "fair", label: "Fair", delta: { d: -2 }, visual: { kind: "skin", tone: "#F6E1D3", shade: "#E7C5B0" } },
-      { id: "light", label: "Light", delta: { d: -1 }, visual: { kind: "skin", tone: "#EBC8AE", shade: "#D6AA8C" } },
-      { id: "medium", label: "Medium", delta: {}, visual: { kind: "skin", tone: "#C99A76", shade: "#AE7D5A" } },
-      { id: "tan", label: "Tan", delta: { d: 1 }, visual: { kind: "skin", tone: "#A3714F", shade: "#87583A" } },
-      { id: "deep", label: "Deep", delta: { d: 2 }, visual: { kind: "skin", tone: "#6B4430", shade: "#523221" } },
-      { id: "rich", label: "Rich deep", delta: { d: 2, c: 0.5 }, visual: { kind: "skin", tone: "#4A2E21", shade: "#361F16" } },
+      { id: "fair", label: "Fair", delta: { d: -2 }, image: "/images/quiz/skin-fair.jpg", swatch: "#F4DCCB", visual: { kind: "skin", tone: "#F6E1D3", shade: "#E7C5B0" } },
+      { id: "light", label: "Light", delta: { d: -1 }, image: "/images/quiz/skin-light.jpg", swatch: "#E8C3A4", visual: { kind: "skin", tone: "#EBC8AE", shade: "#D6AA8C" } },
+      { id: "medium", label: "Medium", delta: {}, image: "/images/quiz/skin-medium.jpg", swatch: "#CF9C74", visual: { kind: "skin", tone: "#C99A76", shade: "#AE7D5A" } },
+      { id: "tan", label: "Tan", delta: { d: 1 }, image: "/images/quiz/skin-tan.jpg", swatch: "#C88A5A", visual: { kind: "skin", tone: "#A3714F", shade: "#87583A" } },
+      { id: "deep", label: "Deep", delta: { d: 2 }, image: "/images/quiz/skin-deep.jpg", swatch: "#8E5A3C", visual: { kind: "skin", tone: "#6B4430", shade: "#523221" } },
+      { id: "rich", label: "Rich deep", delta: { d: 2, c: 0.5 }, image: "/images/quiz/skin-rich-deep.jpg", swatch: "#5E3A27", visual: { kind: "skin", tone: "#4A2E21", shade: "#361F16" } },
     ],
   },
   {

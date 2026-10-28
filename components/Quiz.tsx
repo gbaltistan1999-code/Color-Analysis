@@ -283,12 +283,17 @@ function QuestionScreen({
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-surface-2">
                     {a.image ? (
-                      <Image src={a.image} alt="" fill sizes="220px" className="object-cover" />
+                      <Image src={a.image} alt="" fill sizes="(min-width: 640px) 220px, 50vw" className="object-cover object-top" />
                     ) : (
                       a.visual && <QuizVisual visual={a.visual} />
                     )}
                   </div>
-                  <span className="block bg-[#1e1433] px-3 py-2.5 text-sm font-semibold text-white">{a.label}</span>
+                  <span className="flex items-center gap-2.5 bg-[#1e1433] px-3 py-2.5 text-sm font-semibold text-white">
+                    {a.swatch && (
+                      <span className="h-6 w-6 shrink-0 rounded-full ring-2 ring-white/70" style={{ background: a.swatch }} aria-hidden="true" />
+                    )}
+                    {a.label}
+                  </span>
                   {on && (
                     <span className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#7C3AED] text-white shadow">
                       <IconCheck className="h-4 w-4" />
