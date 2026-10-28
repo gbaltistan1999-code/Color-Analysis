@@ -1,17 +1,14 @@
-import fs from "node:fs";
-import path from "node:path";
 import Image from "next/image";
-import { DrapedFace } from "./Illustrations";
 
-const EXTS = ["jpg", "jpeg", "webp", "png", "avif"];
+/*
+ * Real photo of one model (Jake Nackos, Unsplash License), shown twice with a
+ * different fabric drape laid over her shoulders — the way an in-person draping
+ * session works. The SVG drape uses the photo's own 900×1132 coordinate space.
+ */
+const PHOTO = { src: "/images/drape-model.jpg", width: 900, height: 1132 };
 
-/** Returns the public URL of /public/images/<name>.<ext> if a file exists, else null. */
-function findPhoto(name: string) {
-  for (const ext of EXTS) {
-    if (fs.existsSync(path.join(process.cwd(), "public", "images", `${name}.${ext}`))) return `/images/${name}.${ext}`;
-  }
-  return null;
-}
+const DRAPE_PATH =
+  "M0,1132 L0,962 C70,902 170,852 262,826 C296,915 354,996 440,1008 C526,996 572,905 588,796 C700,818 820,872 900,950 L900,1132 Z";
 
 const panels = [
   {
@@ -19,42 +16,72 @@ const panels = [
     label: "Before",
     verdict: "✗ Unflattering color",
     verdictClass: "text-[#b91c1c] dark:text-[#f87171]",
-    caption: "Skin looks sallow, shadows deepen under the eyes and around the mouth.",
-    alt: "Woman wearing a color that dulls her complexion",
-    svg: { drape: "#C9A227", drapeShade: "#8A6E12", mood: "dull" as const, bg: "from-[#f5f5f4] to-[#e7e5e4] dark:from-[#26222b] dark:to-[#1f1b24]" },
+    caption: "Mustard casts a yellow tint, making skin look sallow and shadows more noticeable.",
+    alt: "Woman wearing a mustard drape that dulls her complexion",
+    colors: ["#C9A227", "#8A6E12"],
+    // Mimics the color a drape reflects onto the face.
+    photoFilter: "saturate(0.85) brightness(0.97) sepia(0.12)",
   },
   {
     key: "after",
     label: "After",
     verdict: "✓ Flattering color",
     verdictClass: "text-[#15803d] dark:text-[#4ade80]",
-    caption: "Skin looks even and bright, eyes stand out, a natural healthy glow.",
-    alt: "The same woman wearing a color that brightens her complexion",
-    svg: { drape: "#E58FB0", drapeShade: "#C2386B", mood: "glow" as const, bg: "from-[#fdf2f8] to-[#ede9fe] dark:from-[#2a1a3a] dark:to-[#241a3d]" },
+    caption: "Cool rose brightens her skin, makes her eyes pop and adds a natural healthy glow.",
+    alt: "The same woman wearing a rose drape that brightens her complexion",
+    colors: ["#E58FB0", "#C2386B"],
+    photoFilter: "saturate(1.05) brightness(1.03)",
   },
 ];
 
-/**
- * Before/after comparison. Drop real photos at public/images/drape-before.(jpg|webp|png)
- * and public/images/drape-after.(…) to replace the SVG fallback.
- */
-export default function DrapeComparison() {
-  const photos = { before: findPhoto("drape-before"), after: findPhoto("drape-after") };
-  const usePhotos = Boolean(photos.before && photos.after);
-
+function Drape({ id, colors }: { id: string; colors: string[] }) {
   return (
-    <div className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
-      {panels.map((p) => (
-        <figure key={p.key} className="card overflow-hidden">
-          {usePhotos ? (
-            <div className="relative aspect-[4/5]">
+    <svg
+      viewBox={`0 0 ${PHOTO.width} ${PHOTO.height}`}
+      preserveAspectRatio="none"
+      className="absolute inset-0 h-full w-full"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id={`${id}-fill`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0.72" stopColor={colors[0]} />
+          <stop offset="1" stopColor={colors[1]} />
+        </linearGradient>
+        <linearGradient id={`${id}-folds`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#000" stopOpacity="0.22" />
+          <stop offset="0.18" stopColor="#fff" stopOpacity="0.14" />
+          <stop offset="0.3" stopColor="#000" stopOpacity="0.08" />
+          <stop offset="0.5" stopColor="#fff" stopOpacity="0.1" />
+          <stop offset="0.7" stopColor="#000" stopOpacity="0.08" />
+          <stop offset="0.84" stopColor="#fff" stopOpacity="0.14" />
+          <stop offset="1" stopColor="#000" stopOpacity="0.22" />
+        </linearGradient>
+        <filter id={`${id}-shadow`} x="-5%" y="-5%" width="110%" height="110%">
+          <feDropShadow dx="0" dy="-4" stdDeviation="6" floodColor="#000" floodOpacity="0.18" />
+        </filter>
+      </defs>
+      <path d={DRAPE_PATH} fill={`url(#${id}-fill)`} filter={`url(#${id}-shadow)`} />
+      <path d={DRAPE_PATH} fill={`url(#${id}-folds)`} />
+    </svg>
+  );
+}
+
+export default function DrapeComparison() {
+  return (
+    <>
+      <div className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
+        {panels.map((p) => (
+          <figure key={p.key} className="card overflow-hidden">
+            <div className="relative" style={{ aspectRatio: `${PHOTO.width} / ${PHOTO.height}` }}>
               <Image
-                src={photos[p.key as "before" | "after"]!}
+                src={PHOTO.src}
                 alt={p.alt}
                 fill
                 sizes="(min-width: 640px) 448px, 100vw"
                 className="object-cover"
+                style={{ filter: p.photoFilter }}
               />
+              <Drape id={`drape-${p.key}`} colors={p.colors} />
               <span
                 className="absolute inset-x-0 bottom-6 text-center font-display text-4xl font-extrabold uppercase tracking-wide text-white sm:text-5xl"
                 style={{ textShadow: "0 2px 16px rgb(0 0 0 / 0.45)" }}
@@ -62,22 +89,25 @@ export default function DrapeComparison() {
                 {p.label}
               </span>
             </div>
-          ) : (
-            <div className={`bg-gradient-to-b px-8 pt-8 ${p.svg.bg}`}>
-              <DrapedFace
-                drape={p.svg.drape}
-                drapeShade={p.svg.drapeShade}
-                mood={p.svg.mood}
-                title={`${p.label}: illustration with a ${p.svg.mood === "glow" ? "flattering" : "unflattering"} drape`}
-              />
-            </div>
-          )}
-          <figcaption className="p-5">
-            <p className={`font-bold ${p.verdictClass}`}>{p.verdict}</p>
-            <p className="mt-1 text-sm text-muted">{p.caption}</p>
-          </figcaption>
-        </figure>
-      ))}
-    </div>
+            <figcaption className="p-5">
+              <p className={`font-bold ${p.verdictClass}`}>{p.verdict}</p>
+              <p className="mt-1 text-sm text-muted">{p.caption}</p>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      <p className="mt-4 text-center text-xs text-muted">
+        Same photo with a simulated fabric drape, for illustration. Photo:{" "}
+        <a
+          href="https://unsplash.com/photos/IF9TK5Uy-KI"
+          className="underline hover:text-primary"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Jake Nackos on Unsplash
+        </a>
+        .
+      </p>
+    </>
   );
 }
