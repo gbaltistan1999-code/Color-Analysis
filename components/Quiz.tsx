@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -44,6 +44,18 @@ const steps: Step[] = [
 ];
 
 const STORAGE_KEY = "huemuse-quiz";
+const TILE_SIZES = "(min-width: 640px) 220px, 50vw";
+const RESULT_SIZES = "(min-width: 640px) 320px, 100vw";
+
+/** Fetch an image with the same srcset/sizes the <Image> will use, so the browser reuses it. */
+function preloadImage(src: string, sizes: string) {
+  const { props } = getImageProps({ src, alt: "", fill: true, sizes });
+  const img = new window.Image();
+  img.decoding = "async";
+  if (props.sizes) img.sizes = props.sizes;
+  if (props.srcSet) img.srcset = props.srcSet;
+  img.src = props.src;
+}
 const answeredBefore = (i: number) => steps.slice(0, i).filter((s) => s.t === "question").length;
 
 function phaseOf(step: Step): string {
@@ -61,6 +73,20 @@ export default function Quiz() {
   const rootRef = useRef<HTMLDivElement>(null);
   const moved = useRef(false);
   const step = steps[index];
+
+  // Warm the cache for the next picture question so its tiles appear instantly.
+  useEffect(() => {
+    const upcoming = steps.slice(index + 1).find((s) => s.t === "question");
+    if (upcoming?.t !== "question") return;
+    for (const a of upcoming.q.answers) if (a.image) preloadImage(a.image, TILE_SIZES);
+  }, [index]);
+
+  // While "analyzing" runs, fetch the result photo so the reveal has no blank frame.
+  useEffect(() => {
+    if (step.t !== "analyzing") return;
+    const season = getSeason(seasonFromScores(blendPhoto(score(answers), photo)));
+    if (season) preloadImage(seasonPhoto(season).src, RESULT_SIZES);
+  }, [step.t, answers, photo]);
 
   // Restore progress after a refresh (answers only — never the photo).
   useEffect(() => {
@@ -178,7 +204,7 @@ function Intro({ onStart }: { onStart: () => void }) {
     <div className="card animate-reveal p-6 text-center sm:p-10">
       <span className="eyebrow">🎨 Free · about 3 minutes · no signup</span>
       <h1 tabIndex={-1} className="mt-5 text-3xl font-extrabold outline-none sm:text-4xl">
-        Let&apos;s find your color season
+        Color analysis quiz: what season am I?
       </h1>
       <p className="mx-auto mt-3 max-w-md text-muted">
         Answer a few easy questions about your natural coloring and style, and we&apos;ll match you to one of 12 seasons
@@ -304,7 +330,7 @@ function QuestionScreen({
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-surface-2">
                     {a.image ? (
-                      <Image src={a.image} alt="" fill sizes="(min-width: 640px) 220px, 50vw" className="object-cover object-top" />
+                      <Image src={a.image} alt="" fill sizes={TILE_SIZES} className="object-cover object-top" />
                     ) : (
                       a.visual && <QuizVisual visual={a.visual} />
                     )}
@@ -728,7 +754,7 @@ function ResultHero({
     >
       {/* Photo: top banner on mobile, fading right panel on desktop */}
       <div className="relative h-60 sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto sm:w-[46%]">
-        <Image src={photo.src} alt={photo.alt} fill priority sizes="(min-width: 640px) 320px, 100vw" className={`object-cover ${photo.position}`} />
+        <Image src={photo.src} alt={photo.alt} fill priority sizes={RESULT_SIZES} className={`object-cover ${photo.position}`} />
         <div
           className="absolute inset-0 hidden sm:block"
           style={{ background: `linear-gradient(90deg, ${theme.bg} 0%, ${theme.bg}00 45%)` }}

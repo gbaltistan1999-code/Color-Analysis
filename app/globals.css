@@ -114,17 +114,20 @@ h4 {
 }
 
 /* Decorative motion — all disabled under prefers-reduced-motion. */
+/* Tilt is a static `rotate`; only `translate` animates, so the GPU compositor runs it off the main thread. */
 @keyframes float {
   0%,
   100% {
-    transform: translateY(0) rotate(var(--r, 0deg));
+    translate: 0 0;
   }
   50% {
-    transform: translateY(-10px) rotate(var(--r, 0deg));
+    translate: 0 -10px;
   }
 }
 .animate-float {
+  rotate: var(--r, 0deg);
   animation: float 6s ease-in-out infinite;
+  will-change: translate;
 }
 
 @keyframes burst {

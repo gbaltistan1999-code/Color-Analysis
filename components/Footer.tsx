@@ -7,7 +7,7 @@ const cols = [
     links: [
       { href: "/quiz", label: "Color Analysis Quiz" },
       { href: "/seasons", label: "All 12 Seasons" },
-      { href: "/undertone-test", label: "Undertone Test" },
+      { href: "/skin-undertone-test", label: "Undertone Test" },
       { href: "/guides", label: "Guides" },
     ],
   },

@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Quiz from "@/components/Quiz";
 
 export const metadata: Metadata = {
-  title: "Color Analysis Quiz",
+  title: "Color Analysis Quiz: What Season Am I? (Free, No Signup)",
   description:
-    "A free 3-minute color analysis quiz with an optional private selfie check. Get your season, undertone, palette with HEX codes and style tips.",
+    "Free color analysis quiz and color season test. Answer 16 quick questions (plus an optional private selfie check) to find your season, undertone and color palette with HEX codes.",
+  alternates: { canonical: "/quiz" },
 };
 
 export default function QuizPage() {

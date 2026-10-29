@@ -22,6 +22,10 @@ import {
   IconWand,
 } from "@/components/Icons";
 import { getSeason, seasons } from "@/lib/seasons";
+import { SITE_NAME, SITE_URL, jsonLd } from "@/lib/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const steps = [
   {
@@ -100,13 +104,34 @@ export default function Home() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={jsonLd([
+          {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: `${SITE_NAME} Color Analysis Quiz`,
+            url: `${SITE_URL}/quiz`,
+            applicationCategory: "LifestyleApplication",
+            operatingSystem: "Any",
+            isAccessibleForFree: true,
+            offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+            description: "Free online color analysis quiz with an optional private selfie check. No signup.",
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+          },
+        ])}
+      />
       {/* 2. Hero */}
       <section className="relative overflow-hidden" style={{ background: "var(--grad-hero)" }}>
         <div className="container-x grid items-center gap-12 py-16 md:grid-cols-2 md:py-24">
           <div>
             <span className="eyebrow">🎨 Free seasonal color analysis</span>
             <h1 className="mt-5 text-4xl font-extrabold leading-tight text-ink sm:text-5xl lg:text-6xl">
-              Find the colors that make you <span className="text-primary">glow</span>
+              Free color analysis: find the colors that make you <span className="text-primary">glow</span>
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-relaxed text-muted">
               Answer a handful of playful questions and we&apos;ll match you to one of 12 color seasons — complete with a

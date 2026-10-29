@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "Blog" };
+// "Coming soon" pages are thin content; keep them out of search results until real posts exist.
+export const metadata: Metadata = { title: "Blog", robots: { index: false, follow: true } };
 
 export default function BlogPage() {
   return (

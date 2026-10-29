@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Poppins } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { SITE_NAME } from "@/components/Logo";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const body = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-body", display: "swap" });
@@ -14,12 +14,21 @@ const heading = Poppins({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Free Color Analysis Quiz`,
-    template: `%s · ${SITE_NAME}`,
+    default: "Free Color Analysis Online — 100% Free, No Signup",
+    template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Find your color season in minutes with a free, private color analysis quiz. Discover your undertone, contrast and a personal palette with HEX codes.",
+    "Free color analysis online: find your color season, skin undertone and personal color palette with HEX codes in 3 minutes. 100% free, no signup, photos never leave your device.",
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: "Free Color Analysis Online — 100% Free, No Signup",
+    description: "Find your color season, undertone and personal palette in 3 minutes. No signup.",
+    images: [{ url: "/images/season-map.jpg", width: 1200, height: 1000, alt: "The 12 color seasons" }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {

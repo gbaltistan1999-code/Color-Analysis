@@ -5,6 +5,7 @@ import { PaletteStrip } from "@/components/Illustrations";
 export const metadata: Metadata = {
   title: "Color Analysis Guides",
   description: "Beginner-friendly guides to undertones, contrast, depth and doing a drape test at home.",
+  alternates: { canonical: "/guides" },
 };
 
 const guides = [
@@ -99,7 +100,7 @@ export default function GuidesPage() {
               <Link href="/quiz" className="btn-primary">
                 Take the Quiz
               </Link>
-              <Link href="/undertone-test" className="btn-ghost">
+              <Link href="/skin-undertone-test" className="btn-ghost">
                 Try the Undertone Test
               </Link>
             </div>

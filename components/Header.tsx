@@ -10,7 +10,7 @@ import ThemeToggle from "./ThemeToggle";
 const nav = [
   { href: "/seasons", label: "Seasons" },
   { href: "/guides", label: "Guides" },
-  { href: "/undertone-test", label: "Undertone Test" },
+  { href: "/skin-undertone-test", label: "Undertone Test" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -28,7 +28,7 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-bg/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-line bg-bg/95">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-full focus:bg-surface focus:px-4 focus:py-2"

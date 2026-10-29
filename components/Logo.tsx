@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-export const SITE_NAME = "HueMuse";
+export { SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
 
 /** Original mark: a six-petal color wheel around a white center. */
 export function LogoMark({ size = 36 }: { size?: number }) {
