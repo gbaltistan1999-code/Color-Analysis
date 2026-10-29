@@ -529,6 +529,21 @@ export const familyExtras: Record<Family, { hair: string; accessories: string }>
   },
 };
 
+/**
+ * Result-page photos. Add a per-season photo (e.g. "soft-autumn") or a per-family one
+ * (e.g. "Autumn") under /public/images/seasons/ and list it here; otherwise the hero photo is used.
+ */
+const seasonPhotos: Partial<Record<string, { src: string; alt: string; position?: string }>> = {};
+
+export function seasonPhoto(season: Season) {
+  const p = seasonPhotos[season.slug] ?? seasonPhotos[season.family];
+  return {
+    src: p?.src ?? "/images/hero.jpg",
+    alt: p?.alt ?? "Smiling woman holding a fan of color swatches",
+    position: p?.position ?? "object-[80%_30%]",
+  };
+}
+
 export function getSeason(slug: string) {
   return seasons.find((s) => s.slug === slug);
 }

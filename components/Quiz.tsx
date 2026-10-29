@@ -16,9 +16,8 @@ import {
   type Question,
   type Selections,
 } from "@/lib/quiz";
-import { familyExtras, getSeason } from "@/lib/seasons";
+import { familyExtras, getSeason, seasonPhoto, type Family, type Season } from "@/lib/seasons";
 import { IconArrow, IconCheck, IconCopy } from "./Icons";
-import { PaletteStrip } from "./Illustrations";
 import PhotoStep, { type PhotoReading } from "./PhotoStep";
 import QuizVisual from "./QuizVisuals";
 import SeasonWheel from "./SeasonWheel";
@@ -520,33 +519,14 @@ function Result({
         ))}
       </div>
 
-      <div className="card animate-reveal overflow-hidden">
-        <div className="p-6 text-center sm:p-8" style={{ background: "var(--grad-hero)" }}>
-          <p className="text-sm font-bold uppercase tracking-wider text-muted">Your color season is</p>
-          <h2 tabIndex={-1} className="mt-2 text-4xl font-extrabold outline-none sm:text-5xl">
-            <span aria-hidden="true">{season.emoji} </span>
-            {season.name}
-          </h2>
-          <p className="mt-2 text-lg font-semibold text-primary">{season.tagline}</p>
-          <PaletteStrip colors={season.palette.map((p) => p.hex)} className="mx-auto mt-5 h-3 max-w-xs" />
-        </div>
+      <ResultHero
+        season={season}
+        traits={traits}
+        tip={struggle ? { title: struggle.title, body: struggle.body({ name: season.name, neutrals: season.neutrals.toLowerCase(), top }) } : undefined}
+      />
 
+      <div className="card animate-reveal mt-6 overflow-hidden">
         <div className="space-y-8 p-6 sm:p-8">
-          <p className="leading-relaxed text-muted">{season.description}</p>
-
-          <dl className="grid grid-cols-3 gap-3 text-center">
-            {[
-              ["Undertone", traits.undertone],
-              ["Depth", traits.depth],
-              ["Contrast", traits.contrast],
-            ].map(([k, v]) => (
-              <div key={k} className="rounded-2xl bg-surface-2 p-3">
-                <dt className="text-xs font-semibold uppercase tracking-wide text-muted">{k}</dt>
-                <dd className="mt-1 font-bold">{v}</dd>
-              </div>
-            ))}
-          </dl>
-
           {photo && (
             <div className="flex items-center gap-3 rounded-2xl border border-line p-4 text-sm">
               <span className="h-9 w-9 shrink-0 rounded-full ring-2 ring-white" style={{ background: photo.hex }} />
@@ -554,15 +534,6 @@ function Result({
                 <span className="font-bold">Selfie check:</span> <span className="text-muted">{photo.summary}. We blended it into your undertone and depth.</span>
               </p>
             </div>
-          )}
-
-          {struggle && (
-            <section className="rounded-2xl p-5 text-white" style={{ background: "var(--grad-cta)" }}>
-              <h3 className="font-bold">💡 {struggle.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-white/90">
-                {struggle.body({ name: season.name, neutrals: season.neutrals.toLowerCase(), top })}
-              </p>
-            </section>
           )}
 
           <section>
@@ -666,6 +637,158 @@ function Result({
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+const familyTheme: Record<Family, { bg: string; ink: string; line: string }> = {
+  Spring: { bg: "#FFF6EA", ink: "#7C2D12", line: "#E9C9A8" },
+  Summer: { bg: "#F1F4FA", ink: "#1E3A5F", line: "#C5D0E3" },
+  Autumn: { bg: "#F5EFE4", ink: "#1F3A2E", line: "#CFC3A8" },
+  Winter: { bg: "#F2F2F7", ink: "#1E1B4B", line: "#C9C8DA" },
+};
+
+const undertoneDot: Record<string, string> = { Warm: "#D4A24C", Cool: "#8AA6C9", Neutral: "#8A8B5C" };
+const contrastHalves: Record<string, [string, string]> = {
+  Low: ["#EDE3D1", "#9C8A6A"],
+  Medium: ["#EDE3D1", "#5A4630"],
+  High: ["#F7F7F7", "#151515"],
+};
+
+function DepthIcon({ depth }: { depth: string }) {
+  if (depth === "Deep")
+    return (
+      <svg viewBox="0 0 24 24" className="h-9 w-9" aria-hidden="true">
+        <path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5Z" fill="#4B3F72" />
+      </svg>
+    );
+  return (
+    <svg viewBox="0 0 24 24" className="h-9 w-9" aria-hidden="true">
+      <circle cx="12" cy="12" r="5" fill={depth === "Light" ? "#F0C24B" : "#D99A3C"} />
+      {Array.from({ length: 8 }, (_, i) => {
+        const a = (i * Math.PI) / 4;
+        return (
+          <line
+            key={i}
+            x1={12 + Math.cos(a) * 7.5}
+            y1={12 + Math.sin(a) * 7.5}
+            x2={12 + Math.cos(a) * 10}
+            y2={12 + Math.sin(a) * 10}
+            stroke={depth === "Light" ? "#F0C24B" : "#D99A3C"}
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+function ResultHero({
+  season,
+  traits,
+  tip,
+}: {
+  season: Season;
+  traits: { undertone: string; depth: string; contrast: string };
+  tip?: { title: string; body: string };
+}) {
+  const theme = familyTheme[season.family];
+  const photo = seasonPhoto(season);
+  const [lo, hi] = contrastHalves[traits.contrast];
+
+  return (
+    <section
+      className="card animate-reveal relative overflow-hidden !border-0 dark:!bg-surface"
+      style={{ background: theme.bg }}
+      aria-labelledby="result-title"
+    >
+      {/* Photo: top banner on mobile, fading right panel on desktop */}
+      <div className="relative h-60 sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto sm:w-[46%]">
+        <Image src={photo.src} alt={photo.alt} fill priority sizes="(min-width: 640px) 320px, 100vw" className={`object-cover ${photo.position}`} />
+        <div
+          className="absolute inset-0 hidden sm:block dark:!hidden"
+          style={{ background: `linear-gradient(90deg, ${theme.bg} 0%, ${theme.bg}00 45%)` }}
+        />
+        <div
+          className="absolute inset-0 sm:hidden dark:!hidden"
+          style={{ background: `linear-gradient(0deg, ${theme.bg} 0%, ${theme.bg}00 40%)` }}
+        />
+        <div className="absolute inset-0 hidden bg-gradient-to-t from-[var(--surface)] to-transparent to-40% dark:block sm:dark:bg-gradient-to-r" />
+      </div>
+
+      <div className="relative p-6 sm:w-[64%] sm:p-8">
+        <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.18em] text-muted sm:text-sm">
+          <span className="h-px w-8 bg-current opacity-50 sm:w-12" />
+          Your color season is
+          <span className="h-px w-8 bg-current opacity-50 sm:w-12" />
+        </p>
+        <h2
+          id="result-title"
+          tabIndex={-1}
+          className="mt-4 inline-flex items-center gap-3 rounded-2xl border-2 bg-white/50 px-4 py-2 text-4xl font-extrabold outline-none sm:text-5xl dark:!border-line dark:!text-ink dark:bg-white/5"
+          style={{ color: theme.ink, borderColor: theme.line }}
+        >
+          <span aria-hidden="true" className="text-3xl sm:text-4xl">
+            {season.emoji}
+          </span>
+          {season.name}
+        </h2>
+        <p className="mt-3 text-lg font-semibold text-muted">{season.tagline}</p>
+
+        <div className="mt-4 flex h-5 max-w-sm overflow-hidden rounded-full" aria-hidden="true">
+          {season.palette.map((p) => (
+            <span key={p.hex} className="flex-1" style={{ background: p.hex }} />
+          ))}
+        </div>
+
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-ink/80 sm:text-base">{season.description}</p>
+      </div>
+
+      <div className="relative px-6 pb-6 sm:px-8 sm:pb-8">
+        <dl className="grid grid-cols-1 gap-3 sm:max-w-[78%] sm:grid-cols-3">
+          <TraitCard label="Undertone" value={traits.undertone}>
+            <span className="h-9 w-9 rounded-full" style={{ background: undertoneDot[traits.undertone] }} />
+          </TraitCard>
+          <TraitCard label="Depth" value={traits.depth}>
+            <DepthIcon depth={traits.depth} />
+          </TraitCard>
+          <TraitCard label="Contrast" value={traits.contrast}>
+            <span className="flex h-9 w-9 overflow-hidden rounded-full ring-1 ring-black/10">
+              <span className="flex-1" style={{ background: lo }} />
+              <span className="flex-1" style={{ background: hi }} />
+            </span>
+          </TraitCard>
+        </dl>
+
+        {tip && (
+          <div
+            className="mt-4 flex items-center gap-4 rounded-2xl p-4 text-white shadow-lg sm:p-5"
+            style={{ background: "linear-gradient(100deg,#6D3FB8 0%,#9B4FA6 50%,#D9607A 100%)" }}
+          >
+            <span className="text-3xl" aria-hidden="true">
+              💡
+            </span>
+            <span className="h-12 w-px shrink-0 bg-white/30" aria-hidden="true" />
+            <div>
+              <h3 className="font-bold sm:text-lg">{tip.title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-white/90">{tip.body}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function TraitCard({ label, value, children }: { label: string; value: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white/70 p-3 backdrop-blur-sm dark:border-line dark:bg-surface-2">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center">{children}</span>
+      <div>
+        <dt className="text-[11px] font-bold uppercase tracking-wider text-muted">{label}</dt>
+        <dd className="text-lg font-bold text-ink">{value}</dd>
       </div>
     </div>
   );
