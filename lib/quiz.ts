@@ -206,6 +206,23 @@ export const questions: Question[] = [
     ],
   },
   {
+    id: "glow",
+    phase: 2,
+    title: "Friends say “Wow, you're glowing!” when you wear…",
+    helper: "Pick the one that gets the most compliments.",
+    select: "single",
+    layout: "tiles",
+    answers: [
+      { id: "peach", label: "Soft peach", delta: { w: 1.5, d: -1 }, image: "/images/quiz/glow-peach.jpg", swatch: "#F7B79A" },
+      { id: "red", label: "Bold red", delta: { c: 2 }, image: "/images/quiz/glow-red.jpg", swatch: "#E3201B" },
+      { id: "olive", label: "Olive green", delta: { w: 1.5, c: -1 }, image: "/images/quiz/glow-olive.jpg", swatch: "#5B6138" },
+      { id: "camel", label: "Rust & camel", delta: { w: 2, d: 0.5 }, image: "/images/quiz/glow-camel.jpg", swatch: "#B0662A" },
+      { id: "navy", label: "Deep navy", delta: { w: -1.5, d: 1 }, image: "/images/quiz/glow-navy.jpg", swatch: "#1E2A55" },
+      { id: "blush", label: "Soft blush", delta: { w: -1, c: -1.5 }, image: "/images/quiz/glow-blush.jpg", swatch: "#EFC6C3" },
+      { id: "unsure", label: "Not sure", delta: {}, visual: { kind: "text", text: "I don't know — let's find out!" } },
+    ],
+  },
+  {
     id: "neutrals",
     phase: 2,
     title: "Which group of neutrals pulls you in?",
