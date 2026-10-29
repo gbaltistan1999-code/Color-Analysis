@@ -270,7 +270,11 @@ function QuestionScreen({
         ? "grid-cols-2 sm:grid-cols-4"
         : q.answers.length > 4
           ? "grid-cols-2 sm:grid-cols-3"
-          : "grid-cols-2";
+          : q.answers.length === 4
+            ? "grid-cols-2 sm:grid-cols-4"
+            : q.answers.length === 3
+              ? "grid-cols-3"
+              : "grid-cols-2";
 
   return (
     <div className="card animate-reveal p-5 sm:p-8">

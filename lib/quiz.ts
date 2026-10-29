@@ -185,10 +185,10 @@ export const questions: Question[] = [
     select: "single",
     layout: "tiles",
     answers: [
-      { id: "gold", label: "Gold", delta: { w: 2 }, visual: { kind: "metal", rings: [GOLD] } },
-      { id: "silver", label: "Silver", delta: { w: -2 }, visual: { kind: "metal", rings: [SILVER] } },
-      { id: "rose", label: "Rose gold", delta: { w: 0.5, c: -0.5 }, visual: { kind: "metal", rings: [ROSE] } },
-      { id: "both", label: "Any of them", delta: {}, visual: { kind: "metal", rings: [GOLD, SILVER] } },
+      { id: "gold", label: "Gold", delta: { w: 2 }, image: "/images/quiz/metal-gold.jpg", visual: { kind: "metal", rings: [GOLD] } },
+      { id: "silver", label: "Silver", delta: { w: -2 }, image: "/images/quiz/metal-silver.jpg", visual: { kind: "metal", rings: [SILVER] } },
+      { id: "rose", label: "Rose gold", delta: { w: 0.5, c: -0.5 }, image: "/images/quiz/metal-rose.jpg", visual: { kind: "metal", rings: [ROSE] } },
+      { id: "both", label: "Any of them", delta: {}, image: "/images/quiz/metal-both.jpg", visual: { kind: "metal", rings: [GOLD, SILVER] } },
     ],
   },
   {
@@ -199,10 +199,10 @@ export const questions: Question[] = [
     select: "single",
     layout: "tiles",
     answers: [
-      { id: "soft", label: "Soft & muted", delta: { c: -2 }, visual: { kind: "outfit", top: "#C9A1A8", layer: "#9CAF94", bottom: "#A7B7C9" } },
-      { id: "crisp", label: "Crisp & classic", delta: { c: 1.5, w: -0.5 }, visual: { kind: "outfit", top: "#FFFFFF", layer: "#1D2B4F", bottom: "#1D2B4F" } },
-      { id: "earthy", label: "Warm & earthy", delta: { w: 1.5, c: -1 }, visual: { kind: "outfit", top: "#B8582E", layer: "#A68A64", bottom: "#5C5A3A" } },
-      { id: "cool", label: "Cool & polished", delta: { w: -1.5 }, visual: { kind: "outfit", top: "#7D93B8", layer: "#9EA3AB", bottom: "#4B5260" } },
+      { id: "soft", label: "Soft & muted", delta: { c: -2 }, image: "/images/quiz/outfit-soft.jpg", visual: { kind: "outfit", top: "#C9A1A8", layer: "#9CAF94", bottom: "#A7B7C9" } },
+      { id: "crisp", label: "Crisp & classic", delta: { c: 1.5, w: -0.5 }, image: "/images/quiz/outfit-crisp.jpg", visual: { kind: "outfit", top: "#FFFFFF", layer: "#1D2B4F", bottom: "#1D2B4F" } },
+      { id: "earthy", label: "Warm & earthy", delta: { w: 1.5, c: -1 }, image: "/images/quiz/outfit-earthy.jpg", visual: { kind: "outfit", top: "#B8582E", layer: "#A68A64", bottom: "#5C5A3A" } },
+      { id: "cool", label: "Cool & polished", delta: { w: -1.5 }, image: "/images/quiz/outfit-cool.jpg", visual: { kind: "outfit", top: "#7D93B8", layer: "#9EA3AB", bottom: "#4B5260" } },
     ],
   },
   {
