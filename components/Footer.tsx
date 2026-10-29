@@ -1,28 +1,36 @@
 import Link from "next/link";
-import { Logo, SITE_NAME } from "./Logo";
+import { SITE_NAME } from "@/lib/site-config";
+import CookieSettingsButton from "./CookieSettingsButton";
+import { Logo } from "./Logo";
+
+const linkClass = "text-sm text-muted transition hover:text-primary";
 
 const cols = [
   {
-    title: "Quick Links",
+    title: "Explore",
     links: [
-      { href: "/quiz", label: "Color Analysis Quiz" },
+      { href: "/#quiz", label: "Color Analysis Quiz" },
       { href: "/seasons", label: "All 12 Seasons" },
-      { href: "/skin-undertone-test", label: "Undertone Test" },
+      { href: "/skin-undertone-test", label: "Skin Undertone Test" },
       { href: "/guides", label: "Guides" },
+      { href: "/faq", label: "FAQ" },
     ],
   },
   {
-    title: "Resources",
+    title: "Company",
     links: [
+      { href: "/about", label: "About Us" },
+      { href: "/contact", label: "Contact Us" },
       { href: "/blog", label: "Blog (coming soon)" },
-      { href: "/contact", label: "Contact" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { href: "/privacy", label: "Privacy Policy" },
-      { href: "/terms", label: "Terms of Use" },
+      { href: "/privacy-policy", label: "Privacy Policy" },
+      { href: "/terms-and-conditions", label: "Terms and Conditions" },
+      { href: "/disclaimer", label: "Disclaimer" },
+      { href: "/cookie-policy", label: "Cookie Policy" },
     ],
   },
 ];
@@ -49,18 +57,27 @@ export default function Footer() {
             <ul className="mt-4 space-y-2.5">
               {col.links.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="text-sm text-muted transition hover:text-primary">
+                  <Link href={l.href} className={linkClass}>
                     {l.label}
                   </Link>
                 </li>
               ))}
+              {col.title === "Legal" && (
+                <li>
+                  <CookieSettingsButton className={`${linkClass} text-left`} />
+                </li>
+              )}
             </ul>
           </nav>
         ))}
       </div>
       <div className="border-t border-line">
         <p className="container-x py-6 text-center text-sm text-muted">
-          © {new Date().getFullYear()} {SITE_NAME}. Results are for fun and inspiration — not professional advice.
+          © {new Date().getFullYear()} {SITE_NAME}. Results are approximate style guidance —{" "}
+          <Link href="/disclaimer" className="underline hover:text-primary">
+            not professional advice
+          </Link>
+          .
         </p>
       </div>
     </footer>

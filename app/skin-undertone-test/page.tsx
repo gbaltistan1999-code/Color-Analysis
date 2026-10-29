@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ, { type FaqItem } from "@/components/FAQ";
 import UndertoneTest, { SelfieDrape } from "@/components/UndertoneTest";
-import { jsonLd } from "@/lib/site";
+import { jsonLd, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Skin Undertone Test: Warm, Cool or Neutral? (Free)",
   description:
     "What undertone am I? Take this free skin undertone test — four quick checks plus a private virtual draping tool with your selfie. Find out if you're warm, cool or neutral.",
-  alternates: { canonical: "/skin-undertone-test" },
-};
+  path: "/skin-undertone-test",
+});
 
 const faqs: FaqItem[] = [
   {
@@ -42,7 +42,10 @@ export default function UndertonePage() {
         })}
       />
       <section style={{ background: "var(--grad-hero)" }}>
-        <div className="container-x py-14 text-center">
+        <div className="container-x pt-10">
+          <Breadcrumbs items={[{ name: "Skin Undertone Test", path: "/skin-undertone-test" }]} />
+        </div>
+        <div className="container-x pb-14 pt-6 text-center">
           <span className="eyebrow">☀️ ❄️ Warm, cool or neutral?</span>
           <h1 className="mt-4 text-4xl font-extrabold sm:text-5xl">Free Skin Undertone Test</h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted">
@@ -63,7 +66,7 @@ export default function UndertonePage() {
           </div>
           <p className="mt-6 text-muted">
             Know your undertone? Take the{" "}
-            <Link href="/quiz" className="font-semibold text-primary underline">
+            <Link href="/#quiz" className="font-semibold text-primary underline">
               free color analysis quiz
             </Link>{" "}
             to find your full color season, or read{" "}

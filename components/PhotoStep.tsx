@@ -2,53 +2,61 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { rgbToHex, toLab, type RGB } from "@/lib/color";
 import { IconCheck, IconClose, IconLock } from "./Icons";
 
-export type PhotoReading = { w: number; d: number; hex: string; summary: string };
+export type PhotoReading = { w: number; d: number; c?: number; hex: string; summary: string };
+
+type Target = "skin" | "hair" | "eyes";
+type Sample = { rgb: RGB; x: number; y: number };
+
+const targets: { id: Target; label: string; hint: string }[] = [
+  { id: "skin", label: "Cheek", hint: "a clear spot on your cheek (avoid blush, shine and shadows)" },
+  { id: "hair", label: "Hair", hint: "your hair near the root, in even light" },
+  { id: "eyes", label: "Eyes", hint: "the colored part of your eye (iris)" },
+];
 
 const clamp = (n: number) => Math.max(-1, Math.min(1, n));
 
-/** sRGB (0–255) → CIE Lab (D65). */
-function toLab(r: number, g: number, b: number) {
-  const lin = (c: number) => {
-    c /= 255;
-    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  };
-  const [R, G, B] = [lin(r), lin(g), lin(b)];
-  const x = (R * 0.4124 + G * 0.3576 + B * 0.1805) / 0.95047;
-  const y = R * 0.2126 + G * 0.7152 + B * 0.0722;
-  const z = (R * 0.0193 + G * 0.1192 + B * 0.9505) / 1.08883;
-  const f = (t: number) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
-  return { L: 116 * f(y) - 16, a: 500 * (f(x) - f(y)), b: 200 * (f(y) - f(z)) };
-}
-
 /**
  * Skin hue angle in Lab runs roughly 40° (pink/rosy) to 65° (golden/olive);
- * lightness runs ~80 (fair) to ~30 (deep). Mapped onto the quiz's -1…1 axes.
+ * lightness runs ~80 (fair) to ~30 (deep). Hair and eye lightness give contrast.
+ * Mapped onto the quiz's -1…1 axes.
  */
-function readSkin(r: number, g: number, b: number): PhotoReading | { error: string } {
-  const { L, a, b: bb } = toLab(r, g, b);
-  if (L < 18) return { error: "That spot looks too dark — try a well-lit part of your cheek." };
-  if (L > 92) return { error: "That spot looks washed out by light — try a spot without shine." };
-  const hue = (Math.atan2(bb, a) * 180) / Math.PI;
+function readPhoto(samples: Partial<Record<Target, Sample>>): PhotoReading | { error: string } {
+  const skin = samples.skin;
+  if (!skin) return { error: "Tap your cheek first — it's the one sample we need." };
+  const { L, a, b } = toLab(skin.rgb);
+  if (L < 18) return { error: "That cheek spot looks too dark — try a well-lit part of your cheek." };
+  if (L > 92) return { error: "That cheek spot looks washed out by light — try a spot without shine." };
+
+  const hue = (Math.atan2(b, a) * 180) / Math.PI;
   const w = clamp((hue - 52) / 10);
   const d = clamp((62 - L) / 24);
-  const hex = "#" + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, "0")).join("");
+
+  const others = [samples.hair, samples.eyes].filter(Boolean) as Sample[];
+  const contrastDiff = others.length ? Math.max(...others.map((s) => Math.abs(L - toLab(s.rgb).L))) : null;
+  const c = contrastDiff === null ? undefined : clamp((contrastDiff - 40) / 20);
+
   const tone = Math.abs(w) < 0.25 ? "neutral" : w > 0 ? "warm (golden)" : "cool (rosy)";
   const depth = d < -0.3 ? "light" : d > 0.3 ? "deep" : "medium";
-  return { w, d, hex, summary: `Reads ${tone}, ${depth} depth` };
+  const contrast = c === undefined ? "" : `, ${c < -0.3 ? "low" : c > 0.3 ? "high" : "medium"} contrast`;
+  return { w, d, c, hex: rgbToHex(skin.rgb), summary: `Reads ${tone}, ${depth} depth${contrast}` };
 }
 
 export default function PhotoStep({ onDone }: { onDone: (reading: PhotoReading | null) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [mark, setMark] = useState<{ x: number; y: number } | null>(null);
-  const [reading, setReading] = useState<PhotoReading | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
+  const [target, setTarget] = useState<Target>("skin");
+  const [samples, setSamples] = useState<Partial<Record<Target, Sample>>>({});
+
+  const result = samples.skin ? readPhoto(samples) : null;
+  const reading = result && !("error" in result) ? result : null;
+  const error = result && "error" in result ? result.error : null;
 
   const onFile = (file?: File) => {
     if (!file || !file.type.startsWith("image/")) return;
+    // Read locally via an object URL — the file never leaves the browser.
     const url = URL.createObjectURL(file);
     const image = new window.Image();
     image.onload = () => {
@@ -56,9 +64,8 @@ export default function PhotoStep({ onDone }: { onDone: (reading: PhotoReading |
       setImg(image);
     };
     image.src = url;
-    setMark(null);
-    setReading(null);
-    setError(null);
+    setSamples({});
+    setTarget("skin");
   };
 
   useEffect(() => {
@@ -68,14 +75,13 @@ export default function PhotoStep({ onDone }: { onDone: (reading: PhotoReading |
     canvas.width = Math.round(img.width * scale);
     canvas.height = Math.round(img.height * scale);
     canvas.getContext("2d", { willReadFrequently: true })?.drawImage(img, 0, 0, canvas.width, canvas.height);
-    setLoaded(true);
   }, [img]);
 
   const sampleAt = (fx: number, fy: number) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d", { willReadFrequently: true });
     if (!canvas || !ctx) return;
-    const size = Math.max(6, Math.round(canvas.width / 40));
+    const size = Math.max(4, Math.round(canvas.width / (target === "eyes" ? 80 : 40)));
     const x = Math.round(fx * canvas.width - size / 2);
     const y = Math.round(fy * canvas.height - size / 2);
     const data = ctx.getImageData(Math.max(0, x), Math.max(0, y), size, size).data;
@@ -86,15 +92,10 @@ export default function PhotoStep({ onDone }: { onDone: (reading: PhotoReading |
       b += data[i + 2];
       n++;
     }
-    setMark({ x: fx, y: fy });
-    const result = readSkin(r / n, g / n, b / n);
-    if ("error" in result) {
-      setError(result.error);
-      setReading(null);
-    } else {
-      setError(null);
-      setReading(result);
-    }
+    setSamples((s) => ({ ...s, [target]: { rgb: [r / n, g / n, b / n], x: fx, y: fy } }));
+    // Move on to the next unsampled area to keep tapping simple.
+    const next = targets.find((t) => t.id !== target && !samples[t.id]);
+    if (next) setTarget(next.id);
   };
 
   const onCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -102,12 +103,22 @@ export default function PhotoStep({ onDone }: { onDone: (reading: PhotoReading |
     sampleAt((e.clientX - rect.left) / rect.width, (e.clientY - rect.top) / rect.height);
   };
 
+  const fileButton = (label: string, capture?: "user") => (
+    <label className="btn-primary w-full cursor-pointer !py-4 text-lg has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--ring)]">
+      <input type="file" accept="image/*" capture={capture} className="sr-only" onChange={(e) => onFile(e.target.files?.[0])} />
+      {label}
+    </label>
+  );
+
   return (
     <div className="card animate-reveal p-6 sm:p-8">
-      <h2 className="text-2xl font-bold sm:text-3xl">Add a selfie for an extra check 📸</h2>
+      <h2 tabIndex={-1} className="text-2xl font-bold outline-none sm:text-3xl">
+        Add a selfie for an extra check 📸
+      </h2>
       <p className="mt-2 text-muted">
-        Totally optional. You&apos;ll tap your cheek and we&apos;ll read your actual skin tone to fine-tune your undertone
-        and depth.
+        Totally optional. Tap your cheek (and, if you like, your hair and eyes) and we&apos;ll read your actual colors to
+        fine-tune your undertone, depth and contrast. Lighting and cameras distort color, so this only supports your quiz
+        answers — it doesn&apos;t override them.
       </p>
 
       {!img && (
@@ -149,36 +160,64 @@ export default function PhotoStep({ onDone }: { onDone: (reading: PhotoReading |
 
       {img && (
         <div className="mt-6">
-          <p className="font-semibold">
-            Tap a clear spot on your cheek <span className="font-normal text-muted">(avoid blush, shine and shadows)</span>
+          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="What are you sampling?">
+            {targets.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                role="radio"
+                aria-checked={target === t.id}
+                onClick={() => setTarget(t.id)}
+                className={`flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-semibold transition ${
+                  target === t.id ? "border-primary bg-primary-soft text-primary" : "border-line"
+                }`}
+              >
+                {samples[t.id] ? (
+                  <span className="h-4 w-4 rounded-full ring-1 ring-black/20" style={{ background: rgbToHex(samples[t.id]!.rgb) }} />
+                ) : null}
+                {t.label}
+                {t.id === "skin" ? "" : <span className="font-normal text-muted">(optional)</span>}
+              </button>
+            ))}
+          </div>
+          <p className="mt-3 font-semibold">
+            Tap {targets.find((t) => t.id === target)!.hint}
           </p>
           <div className="relative mt-3 overflow-hidden rounded-2xl">
             <canvas
               ref={canvasRef}
               onClick={onCanvasClick}
               className="block h-auto w-full cursor-crosshair"
-              aria-label="Your photo. Click on your cheek to sample your skin tone."
+              aria-label="Your photo. Click on the selected area to sample its color."
             />
-            {mark && (
-              <span
-                className="pointer-events-none absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-white shadow-[0_0_0_2px_#7C3AED]"
-                style={{ left: `${mark.x * 100}%`, top: `${mark.y * 100}%`, background: reading?.hex ?? "transparent" }}
-              />
-            )}
+            {targets.map((t) => {
+              const s = samples[t.id];
+              return s ? (
+                <span
+                  key={t.id}
+                  className="pointer-events-none absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[3px] border-white text-[10px] font-bold text-white shadow-[0_0_0_2px_#7C3AED]"
+                  style={{ left: `${s.x * 100}%`, top: `${s.y * 100}%`, background: rgbToHex(s.rgb) }}
+                >
+                  <span className="sr-only">{t.label} sample</span>
+                </span>
+              ) : null;
+            })}
           </div>
-          {loaded && !mark && (
+          {!samples.skin && (
             <button type="button" onClick={() => sampleAt(0.38, 0.5)} className="mt-2 text-sm font-semibold text-primary underline">
-              Can&apos;t tap? Sample the left-of-center area instead
+              Can&apos;t tap? Sample the left-of-center area as your cheek instead
             </button>
           )}
           <div aria-live="polite" className="mt-4">
-            {error && <p className="rounded-xl bg-[#fef2f2] p-3 text-sm font-semibold text-[#b91c1c] dark:bg-[#3b1219] dark:text-[#fca5a5]">{error}</p>}
+            {error && (
+              <p className="rounded-xl bg-[#fef2f2] p-3 text-sm font-semibold text-[#b91c1c] dark:bg-[#3b1219] dark:text-[#fca5a5]">{error}</p>
+            )}
             {reading && (
               <div className="flex items-center gap-3 rounded-2xl bg-surface-2 p-3">
                 <span className="h-10 w-10 shrink-0 rounded-full ring-2 ring-white" style={{ background: reading.hex }} />
                 <p className="text-sm">
                   <span className="font-bold">{reading.summary}.</span>{" "}
-                  <span className="text-muted">Tap another spot to re-check.</span>
+                  <span className="text-muted">Tap again to re-check any area.</span>
                 </p>
               </div>
             )}
@@ -189,21 +228,23 @@ export default function PhotoStep({ onDone }: { onDone: (reading: PhotoReading |
       <div className="mt-6 flex gap-3 rounded-2xl bg-[#fdf2f8] p-4 dark:bg-[#2a1a3a]">
         <IconLock className="mt-0.5 h-5 w-5 shrink-0 text-[#be185d] dark:text-[#f9a8d4]" />
         <p className="text-sm text-[#831843] dark:text-[#fbcfe8]">
-          Your photo never leaves your device. It&apos;s read right here in your browser — nothing is uploaded or saved,
-          and it&apos;s gone when you leave the page.
+          Your photo never leaves your device. It&apos;s read right here in your browser — nothing is uploaded, sent or
+          saved, and it&apos;s gone when you leave the page.
         </p>
       </div>
 
       <div className="mt-6 flex flex-col gap-3">
         {reading ? (
           <button type="button" onClick={() => onDone(reading)} className="btn-primary w-full !py-4 text-lg">
-            Use this reading & see my results
+            Use this reading &amp; see my results
           </button>
+        ) : img ? (
+          fileButton("Choose a different photo")
         ) : (
-          <label className="btn-primary w-full cursor-pointer !py-4 text-lg has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--ring)]">
-            <input type="file" accept="image/*" className="sr-only" onChange={(e) => onFile(e.target.files?.[0])} />
-            {img ? "Choose a different photo" : "Add a selfie"}
-          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {fileButton("Take a selfie", "user")}
+            {fileButton("Upload a photo")}
+          </div>
         )}
         <button type="button" onClick={() => onDone(null)} className="btn-ghost w-full !py-4">
           Skip — show my results

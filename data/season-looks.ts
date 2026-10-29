@@ -9,7 +9,7 @@ export const seasonLooks: Record<string, { hair: string; eyes: string; skin: str
     skin: "Fair to light with a peachy or golden glow",
     summary: "Think sunlit and delicate — everything is light, warm and gently clear.",
   },
-  "warm-spring": {
+  "true-spring": {
     hair: "Golden blonde, honey, strawberry or golden auburn",
     eyes: "Warm green, hazel, golden brown or turquoise",
     skin: "Light to medium with golden or peachy warmth; freckles are common",
@@ -27,7 +27,7 @@ export const seasonLooks: Record<string, { hair: string; eyes: string; skin: str
     skin: "Fair to light with pink or rosy hints",
     summary: "Airy and cool — soft, light coloring with very little contrast.",
   },
-  "cool-summer": {
+  "true-summer": {
     hair: "Ash brown or cool medium brown, often with a smoky cast",
     eyes: "Grey-blue, cool blue or soft cool brown",
     skin: "Light to medium with rosy or neutral-pink undertones",
@@ -45,7 +45,7 @@ export const seasonLooks: Record<string, { hair: string; eyes: string; skin: str
     skin: "Light to medium with a warm, sometimes olive cast",
     summary: "Warm and mellow — earthy coloring softened as if by a light mist.",
   },
-  "warm-autumn": {
+  "true-autumn": {
     hair: "Auburn, copper, golden brown or chestnut",
     eyes: "Golden brown, amber, warm hazel or olive green",
     skin: "Light to deep with clear golden warmth",
@@ -63,7 +63,7 @@ export const seasonLooks: Record<string, { hair: string; eyes: string; skin: str
     skin: "Medium to deep with neutral-cool undertones",
     summary: "Bold and dramatic — deep coloring with striking contrast.",
   },
-  "cool-winter": {
+  "true-winter": {
     hair: "Dark brown to black with no golden glints, or striking silver",
     eyes: "Icy blue, cool grey or dark cool brown",
     skin: "Porcelain to deep, with clearly cool or rosy undertones",

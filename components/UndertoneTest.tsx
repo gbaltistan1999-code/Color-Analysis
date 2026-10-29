@@ -46,12 +46,12 @@ const results = {
   warm: {
     title: "Warm undertone ☀️",
     body: "Your skin has golden, peachy or yellow hints. Earthy and golden colors and gold jewelry tend to flatter you.",
-    seasons: ["warm-spring", "warm-autumn", "light-spring", "soft-autumn"],
+    seasons: ["true-spring", "true-autumn", "light-spring", "soft-autumn"],
   },
   cool: {
     title: "Cool undertone ❄️",
     body: "Your skin has pink, rosy or blue hints. Blue-based colors, jewel tones and silver jewelry tend to flatter you.",
-    seasons: ["cool-summer", "cool-winter", "light-summer", "deep-winter"],
+    seasons: ["true-summer", "true-winter", "light-summer", "deep-winter"],
   },
   neutral: {
     title: "Neutral undertone 🌗",
@@ -118,7 +118,7 @@ export default function UndertoneTest() {
                 </li>
               ))}
             </ul>
-            <Link href="/quiz" className="btn-primary mt-6">
+            <Link href="/#quiz" className="btn-primary mt-6">
               Get your full season
             </Link>
           </div>

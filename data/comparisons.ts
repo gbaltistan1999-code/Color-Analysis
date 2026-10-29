@@ -77,8 +77,8 @@ export const comparisons: Comparison[] = [
     description:
       "True (Cool) Winter vs Bright Winter: both are cool and high-contrast, but one is icy and pure, the other electric and vivid. Compare palettes and easy tests.",
     intro:
-      "True Winter (we call it Cool Winter) and Bright Winter share cool coloring and striking contrast. True Winter is defined by coolness, Bright Winter by clarity — its colors are the most vivid of all 12 seasons.",
-    pair: ["cool-winter", "bright-winter"],
+      "True Winter and Bright Winter share cool coloring and striking contrast. True Winter is defined by coolness, Bright Winter by clarity — its colors are the most vivid of all 12 seasons.",
+    pair: ["true-winter", "bright-winter"],
     shared: "Cool undertones, high contrast and clear (not muted) colors. Both can wear black, white and jewel tones.",
     differences: [
       { label: "Defining trait", a: "Coolness", b: "Brightness and clarity" },

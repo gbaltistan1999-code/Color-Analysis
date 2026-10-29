@@ -21,17 +21,49 @@ import {
   IconUserOff,
   IconWand,
 } from "@/components/Icons";
-import { getSeason, seasons } from "@/lib/seasons";
-import { SITE_NAME, SITE_URL, jsonLd } from "@/lib/site";
-import type { Metadata } from "next";
+import Quiz from "@/components/Quiz";
+import { familyInfo } from "@/data/families";
+import { seasons } from "@/data/seasons";
+import { getSeason } from "@/lib/seasons";
+import { SITE_NAME, SITE_URL } from "@/lib/site-config";
+import { faqLd, jsonLd, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata = pageMetadata({
+  title: "Color Analysis — Free Color Season Quiz, No Signup",
+  description:
+    "Free color analysis quiz: find your color season, skin undertone and personal palette with HEX codes in about 3 minutes. No signup — answers and photos stay on your device.",
+  path: "/",
+  absoluteTitle: true,
+});
+
+const prepare = [
+  { emoji: "☀️", title: "Natural daylight", body: "Sit facing a window. Indoor bulbs tint everything yellow or blue." },
+  { emoji: "🧼", title: "Bare skin", body: "Skip makeup and self-tanner if you can — they mask your undertone." },
+  { emoji: "💇", title: "Hair pulled back", body: "Keep dyed or highlighted hair away from your face; think about your natural color." },
+  { emoji: "👕", title: "Neutral clothing", body: "Wear white, grey or black so a bright top doesn't reflect onto your skin." },
+];
+
+const calc = [
+  { name: "Undertone", body: "Veins, jewelry, sun reaction and the whites you prefer show whether you lean warm, cool or neutral." },
+  { name: "Value (depth)", body: "Your natural hair, eye and skin depth show how light or deep your overall coloring is." },
+  { name: "Chroma (clarity)", body: "The colors that get you compliments show whether clear brights or soft, muted shades suit you." },
+  { name: "Contrast", body: "How much your hair, skin and eyes stand apart decides whether bold or blended combinations work best." },
+];
+
+const factors = [
+  { title: "Lighting", body: "Warm bulbs make everyone look warmer; overcast daylight is the most neutral." },
+  { title: "Camera white balance", body: "Phones auto-correct color, which can shift a selfie warmer or cooler than real life." },
+  { title: "Makeup and self-tanner", body: "Foundation and bronzer change the skin tone the photo check reads." },
+  { title: "Hair dye", body: "Answer with your natural color — dyed hair can push you toward the wrong season." },
+  { title: "Tanning", body: "A tan deepens your skin but doesn't change your undertone." },
+  { title: "Screen settings", body: "Night mode and display settings change how swatches look on your screen." },
+];
 
 const steps = [
   {
     icon: IconChat,
     title: "Answer questions or add a selfie",
-    body: "Tell us about your veins, hair, eyes and favorite colors — or try our virtual drape with a selfie. About two minutes.",
+    body: "Tell us about your veins, hair, eyes and favorite colors — and add an optional selfie check at the end. About three minutes.",
   },
   {
     icon: IconWand,
@@ -68,7 +100,7 @@ const reasons = [
 
 const faqs: FaqItem[] = [
   {
-    q: "What is seasonal color analysis?",
+    q: "What is seasonal colour analysis?",
     a: "It's a way of grouping people by the natural colors of their skin, hair and eyes. Each 'season' shares a mix of undertone (warm or cool), depth (light or deep) and chroma (soft or bright), and a matching palette that tends to look harmonious.",
   },
   {
@@ -77,11 +109,11 @@ const faqs: FaqItem[] = [
   },
   {
     q: "Do I need to upload a photo?",
-    a: "No. The quiz works entirely from your answers. If you'd like, the Undertone Test page has an optional virtual drape: your selfie is shown only inside your browser and is never uploaded or saved.",
+    a: "No. The quiz works entirely from your answers. At the end you can add an optional selfie check — it's processed only in your browser and is never uploaded or saved.",
   },
   {
     q: "Is my data saved anywhere?",
-    a: "No. Your answers are processed in your browser and disappear when you close the tab. We don't ask for a name, email or account.",
+    a: "No. Your answers are processed in your browser and never sent to us. While you're mid-quiz, progress is kept in your browser's session storage so a refresh doesn't lose it; it's cleared when you finish or close the tab. We don't ask for a name, email or account.",
   },
   {
     q: "What if I'm between two seasons?",
@@ -100,7 +132,7 @@ const trust = [
 ];
 
 export default function Home() {
-  const example = getSeason("cool-summer")!;
+  const example = getSeason("true-summer")!;
 
   return (
     <>
@@ -110,19 +142,16 @@ export default function Home() {
           {
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            name: `${SITE_NAME} Color Analysis Quiz`,
-            url: `${SITE_URL}/quiz`,
+            name: "Color Analysis Quiz",
+            url: `${SITE_URL}/#quiz`,
             applicationCategory: "LifestyleApplication",
             operatingSystem: "Any",
             isAccessibleForFree: true,
             offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
             description: "Free online color analysis quiz with an optional private selfie check. No signup.",
           },
-          {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-          },
+          { "@context": "https://schema.org", "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
+          faqLd(faqs),
         ])}
       />
       {/* 2. Hero */}
@@ -131,15 +160,15 @@ export default function Home() {
           <div>
             <span className="eyebrow">🎨 Free seasonal color analysis</span>
             <h1 className="mt-5 text-4xl font-extrabold leading-tight text-ink sm:text-5xl lg:text-6xl">
-              Free color analysis: find the colors that make you <span className="text-primary">glow</span>
+              Color Analysis: find the colors that make you <span className="text-primary">glow</span>
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-relaxed text-muted">
               Answer a handful of playful questions and we&apos;ll match you to one of 12 color seasons — complete with a
               personal palette, makeup ideas and style tips.
             </p>
-            <Link href="/quiz" className="btn-primary mt-8 !px-8 !py-4 text-lg">
+            <a href="#quiz" className="btn-primary mt-8 !px-8 !py-4 text-lg">
               Take the Free Quiz <IconArrow className="h-5 w-5" />
-            </Link>
+            </a>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
               {trust.map(({ icon: Icon, label }) => (
                 <li key={label} className="flex items-center gap-2 text-sm font-semibold text-ink">
@@ -152,6 +181,32 @@ export default function Home() {
             </ul>
           </div>
           <HeroIllustration />
+        </div>
+      </section>
+
+      {/* Quiz */}
+      <section id="quiz" aria-label="Color analysis quiz" className="scroll-mt-16 bg-surface-2 px-4 py-12 sm:py-16">
+        <Quiz />
+      </section>
+
+      {/* What color analysis is */}
+      <section className="py-20" aria-labelledby="what">
+        <div className="container-x max-w-3xl">
+          <h2 id="what" className="section-title">
+            What is color analysis? 🎨
+          </h2>
+          <div className="mt-5 space-y-4 text-lg leading-relaxed text-muted">
+            <p>
+              Color analysis (or colour analysis) is a way to find the clothing, makeup and hair colors that harmonize with
+              your natural coloring — your skin, hair and eyes. The right shades near your face can make skin look clearer
+              and eyes brighter; the wrong ones can cast shadows.
+            </p>
+            <p>
+              Seasonal color analysis groups these palettes into four seasons — Spring, Summer, Autumn and Winter — each split
+              into three sub-seasons, for 12 in total. Every season appears across all skin tones; it&apos;s about how colors
+              interact with your features, not how light or dark your skin is.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -178,6 +233,52 @@ export default function Home() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* How to prepare */}
+      <section className="py-20" aria-labelledby="prepare">
+        <div className="container-x">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 id="prepare" className="section-title">
+              How to prepare 🪞
+            </h2>
+            <p className="mt-4 text-lg text-muted">Two minutes of setup makes your result far more reliable.</p>
+          </div>
+          <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {prepare.map((p) => (
+              <li key={p.title} className="card p-6">
+                <span className="text-3xl" aria-hidden="true">
+                  {p.emoji}
+                </span>
+                <h3 className="mt-3 text-lg font-bold">{p.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{p.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* How the result is calculated */}
+      <section className="bg-surface-2 py-20" aria-labelledby="calc">
+        <div className="container-x">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 id="calc" className="section-title">
+              How your result is calculated 🧮
+            </h2>
+            <p className="mt-4 text-lg text-muted">
+              Each answer nudges four characteristics. Whichever stands out most decides your season — and if two are nearly
+              tied, we tell you the close second instead of pretending to be precise.
+            </p>
+          </div>
+          <dl className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {calc.map((c) => (
+              <div key={c.name} className="card p-6">
+                <dt className="text-lg font-bold">{c.name}</dt>
+                <dd className="mt-2 text-sm leading-relaxed text-muted">{c.body}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
@@ -286,11 +387,47 @@ export default function Home() {
             </h2>
             <p className="mt-4 text-lg text-muted">Every season has its own mood. Tap one to explore its full palette.</p>
           </div>
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-10 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {familyInfo.map((f) => (
+              <li key={f.slug}>
+                <Link
+                  href={`/seasons/${f.slug}`}
+                  className="block rounded-2xl border border-line bg-surface p-4 text-center font-semibold transition hover:border-primary hover:text-primary"
+                >
+                  <span aria-hidden="true">{f.emoji} </span>
+                  {f.family}
+                  <span className="block text-sm font-normal text-muted">{f.tagline}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {seasons.map((s) => (
               <SeasonCard key={s.slug} season={s} />
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* What can affect results */}
+      <section className="py-20" aria-labelledby="factors">
+        <div className="container-x">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 id="factors" className="section-title">
+              What can affect your results
+            </h2>
+            <p className="mt-4 text-lg text-muted">
+              An online colour analysis test is a strong starting point, but these can nudge it off course.
+            </p>
+          </div>
+          <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {factors.map((x) => (
+              <li key={x.title} className="rounded-2xl border border-line bg-surface p-5">
+                <h3 className="font-bold">{x.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted">{x.body}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -319,10 +456,14 @@ export default function Home() {
             />
             <h2 className="text-3xl font-extrabold sm:text-4xl">Ready to meet your colors? 🎨</h2>
             <p className="mx-auto mt-4 max-w-xl text-lg text-white/90">
-              Two minutes, zero signups and a palette you&apos;ll actually use.
+              Two minutes, zero signups and a palette you&apos;ll actually use. Already know your season? Explore its{" "}
+              <Link href="/seasons" className="font-semibold underline">
+                full palette page
+              </Link>
+              .
             </p>
             <Link
-              href="/quiz"
+              href="/#quiz"
               className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-lg font-bold text-[#6D28D9] shadow-xl transition hover:-translate-y-0.5 hover:shadow-2xl"
             >
               Start Your Free Color Analysis <IconArrow className="h-5 w-5" />

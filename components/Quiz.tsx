@@ -3,22 +3,21 @@
 import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  blendPhoto,
-  colorDistance,
-  describe,
-  phases,
-  questions,
-  score,
-  seasonFromScores,
-  struggleTips,
-  type Phase,
-  type Question,
-  type Selections,
-} from "@/lib/quiz";
-import { familyExtras, getSeason, seasonPhoto, type Family, type Season } from "@/lib/seasons";
+import dynamic from "next/dynamic";
+import { phases, questions, struggleTips } from "@/data/quiz-questions";
+import { familyExtras } from "@/data/seasons";
+import { colorDistance } from "@/lib/color";
+import { blendPhoto, classify, describe, explain, score } from "@/lib/quiz-scoring";
+import { getSeason, seasonPhoto } from "@/lib/seasons";
+import type { Family, Phase, Question, Season, Selections } from "@/types";
 import { IconArrow, IconCheck, IconCopy } from "./Icons";
-import PhotoStep, { type PhotoReading } from "./PhotoStep";
+import type { PhotoReading } from "./PhotoStep";
+
+// The photo tool (canvas + color math) loads only when someone opens that step.
+const PhotoStep = dynamic(() => import("./PhotoStep"), {
+  ssr: false,
+  loading: () => <div className="card p-8 text-center text-muted">Loading the photo check…</div>,
+});
 import QuizVisual from "./QuizVisuals";
 import SeasonWheel from "./SeasonWheel";
 
@@ -43,7 +42,7 @@ const steps: Step[] = [
   { t: "result" },
 ];
 
-const STORAGE_KEY = "huemuse-quiz";
+const STORAGE_KEY = "color-analysis-quiz";
 const TILE_SIZES = "(min-width: 640px) 220px, 50vw";
 const RESULT_SIZES = "(min-width: 640px) 320px, 100vw";
 
@@ -84,7 +83,7 @@ export default function Quiz() {
   // While "analyzing" runs, fetch the result photo so the reveal has no blank frame.
   useEffect(() => {
     if (step.t !== "analyzing") return;
-    const season = getSeason(seasonFromScores(blendPhoto(score(answers), photo)));
+    const season = getSeason(classify(blendPhoto(score(answers, questions), photo)).season);
     if (season) preloadImage(seasonPhoto(season).src, RESULT_SIZES);
   }, [step.t, answers, photo]);
 
@@ -203,9 +202,9 @@ function Intro({ onStart }: { onStart: () => void }) {
   return (
     <div className="card animate-reveal p-6 text-center sm:p-10">
       <span className="eyebrow">🎨 Free · about 3 minutes · no signup</span>
-      <h1 tabIndex={-1} className="mt-5 text-3xl font-extrabold outline-none sm:text-4xl">
+      <h2 tabIndex={-1} className="mt-5 text-3xl font-extrabold outline-none sm:text-4xl">
         Color analysis quiz: what season am I?
-      </h1>
+      </h2>
       <p className="mx-auto mt-3 max-w-md text-muted">
         Answer a few easy questions about your natural coloring and style, and we&apos;ll match you to one of 12 seasons
         — with a palette made for you.
@@ -216,7 +215,6 @@ function Intro({ onStart }: { onStart: () => void }) {
           alt="Map of the 12 color seasons: Winter is cool and bright, Spring is warm and bright, Summer is cool and soft, Autumn is warm and soft, with example portraits and palettes for each season"
           width={1200}
           height={1000}
-          priority
           sizes="(min-width: 672px) 610px, 100vw"
           className="h-auto w-full"
         />
@@ -512,8 +510,10 @@ function Result({
   photo: PhotoReading | null;
   onRestart: () => void;
 }) {
-  const scores = useMemo(() => blendPhoto(score(answers), photo), [answers, photo]);
-  const season = getSeason(seasonFromScores(scores))!;
+  const scores = useMemo(() => blendPhoto(score(answers, questions), photo), [answers, photo]);
+  const result = classify(scores);
+  const season = getSeason(result.season)!;
+  const runnerUp = result.runnerUp ? getSeason(result.runnerUp) : undefined;
   const traits = describe(scores);
   const extras = familyExtras[season.family];
   const [copied, setCopied] = useState<string | null>(null);
@@ -575,11 +575,36 @@ function Result({
 
       <div className="card animate-reveal mt-6 overflow-hidden">
         <div className="space-y-8 p-6 sm:p-8">
+          <section aria-labelledby="why-result" className="rounded-2xl bg-surface-2 p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 id="why-result" className="font-bold">
+                Why you got {season.name}
+              </h3>
+              <span className={`rounded-full px-3 py-1 text-xs font-bold ${confidenceStyle[result.confidence]}`}>
+                {confidenceLabel[result.confidence]}
+              </span>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{explain(scores, season.name, result.dominant)}</p>
+            {runnerUp && (
+              <p className="mt-3 text-sm leading-relaxed">
+                <span className="font-semibold">Close second: </span>
+                <Link href={`/seasons/${runnerUp.slug}`} className="font-semibold text-primary underline">
+                  {runnerUp.name}
+                </Link>
+                <span className="text-muted">
+                  {" "}
+                  — your answers sit near the border between the two. Compare both palettes in daylight and keep the one that
+                  flatters you more.
+                </span>
+              </p>
+            )}
+          </section>
+
           {photo && (
             <div className="flex items-center gap-3 rounded-2xl border border-line p-4 text-sm">
               <span className="h-9 w-9 shrink-0 rounded-full ring-2 ring-white" style={{ background: photo.hex }} />
               <p>
-                <span className="font-bold">Selfie check:</span> <span className="text-muted">{photo.summary}. We blended it into your undertone and depth.</span>
+                <span className="font-bold">Selfie check:</span> <span className="text-muted">{photo.summary}. We blended it in at 30%, since lighting and cameras shift color.</span>
               </p>
             </div>
           )}
@@ -672,8 +697,9 @@ function Result({
           </div>
 
           <p className="rounded-2xl border border-line p-4 text-sm text-muted">
-            Quiz results are a friendly starting point, not a professional diagnosis. Try a few palette colors near your
-            face in daylight and trust your mirror.
+            Your result is an approximate guide, not a professional diagnosis. An in-person draping session with a trained
+            color analyst is the most accurate method. Until then, try a few palette colors near your face in daylight and
+            trust your mirror.
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -840,6 +866,13 @@ function TraitCard({ label, value, children }: { label: string; value: string; c
     </div>
   );
 }
+
+const confidenceLabel = { high: "Clear match", medium: "Likely match", low: "Close call" } as const;
+const confidenceStyle = {
+  high: "bg-[#dcfce7] text-[#166534]",
+  medium: "bg-[#fef9c3] text-[#854d0e]",
+  low: "bg-[#ffedd5] text-[#9a3412]",
+} as const;
 
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (

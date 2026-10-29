@@ -3,16 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { siteConfig } from "@/lib/site-config";
 import { Logo } from "./Logo";
 import { IconClose, IconMenu } from "./Icons";
 import ThemeToggle from "./ThemeToggle";
 
-const nav = [
-  { href: "/seasons", label: "Seasons" },
-  { href: "/guides", label: "Guides" },
-  { href: "/skin-undertone-test", label: "Undertone Test" },
-  { href: "/contact", label: "Contact" },
-];
+const nav = siteConfig.nav;
+const isCurrent = (pathname: string, href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -44,7 +41,7 @@ export default function Header() {
               <li key={n.href}>
                 <Link
                   href={n.href}
-                  aria-current={pathname.startsWith(n.href) ? "page" : undefined}
+                  aria-current={isCurrent(pathname, n.href) ? "page" : undefined}
                   className="rounded-full px-3 py-2 text-sm font-semibold text-muted transition hover:bg-primary-soft hover:text-primary aria-[current=page]:text-primary"
                 >
                   {n.label}
@@ -56,7 +53,7 @@ export default function Header() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Link href="/quiz" className="btn-primary hidden !px-5 !py-2.5 text-sm sm:inline-flex">
+          <Link href="/#quiz" className="btn-primary hidden !px-5 !py-2.5 text-sm sm:inline-flex">
             Take the Quiz
           </Link>
           <button
@@ -86,7 +83,7 @@ export default function Header() {
               </li>
             ))}
           </ul>
-          <Link href="/quiz" className="btn-primary mt-3 w-full">
+          <Link href="/#quiz" className="btn-primary mt-3 w-full">
             Take the Quiz
           </Link>
         </nav>

@@ -1,51 +1,11 @@
-/**
- * Quiz content and scoring. Each answer nudges three axes:
+import type { Phase, Question, StruggleTip } from "@/types";
+
+/*
+ * Quiz content. Each answer nudges three axes (see lib/quiz-scoring.ts):
  *   w  warmth  (-cool  … +warm)
  *   d  depth   (-light … +deep)
  *   c  chroma  (-soft  … +bright/high contrast)
- * The axis with the strongest normalized signal becomes the season's dominant
- * trait, and the other two pick the specific season — the classic 12-season model.
  */
-
-export type Delta = { w?: number; d?: number; c?: number };
-
-export type Visual =
-  | { kind: "hair"; colors: [string, string, string] }
-  | { kind: "eye"; iris: string; ring: string }
-  | { kind: "eyeMix" }
-  | { kind: "skin"; tone: string; shade: string }
-  | { kind: "tee"; colors: string[] }
-  | { kind: "fabric"; colors: string[] }
-  | { kind: "outfit"; top: string; layer: string; bottom: string }
-  | { kind: "metal"; rings: [string, string][] }
-  | { kind: "pair"; colors: [string, string] }
-  | { kind: "text"; text: string };
-
-export type Answer = {
-  id: string;
-  label: string;
-  delta: Delta;
-  /** Illustration for tile layouts. */
-  visual?: Visual;
-  /** Optional real photo in /public that replaces the illustration. */
-  image?: string;
-  /** Single color dot for swatch layouts. */
-  swatch?: string;
-  /** In multi-select, choosing this clears the others (e.g. "none"). */
-  exclusive?: boolean;
-};
-
-export type Phase = 1 | 2 | 3;
-
-export type Question = {
-  id: string;
-  phase: Phase;
-  title: string;
-  helper?: string;
-  select: "single" | "multi";
-  layout: "list" | "tiles" | "swatches";
-  answers: Answer[];
-};
 
 export const phases: Record<Phase, { name: string; done: string; next: string }> = {
   1: {
@@ -323,76 +283,7 @@ export const questions: Question[] = [
   },
 ];
 
-export type Selections = Record<string, string | string[]>;
-export type Scores = { w: number; d: number; c: number };
-
-const axes = ["w", "d", "c"] as const;
-
-function chosen(q: Question, sel: Selections): Answer[] {
-  const v = sel[q.id];
-  const ids = Array.isArray(v) ? v : v ? [v] : [];
-  return q.answers.filter((a) => ids.includes(a.id));
-}
-
-/** Largest possible |contribution| of a question on an axis (multi-selects are averaged). */
-function questionMax(q: Question, axis: (typeof axes)[number]) {
-  return Math.max(0, ...q.answers.map((a) => Math.abs(a.delta[axis] ?? 0)));
-}
-
-/** Normalized scores in [-1, 1] for each axis. */
-export function score(sel: Selections): Scores {
-  const raw = { w: 0, d: 0, c: 0 };
-  const max = { w: 0, d: 0, c: 0 };
-  for (const q of questions) {
-    const picks = chosen(q, sel);
-    for (const axis of axes) {
-      max[axis] += questionMax(q, axis);
-      if (picks.length) raw[axis] += picks.reduce((s, a) => s + (a.delta[axis] ?? 0), 0) / picks.length;
-    }
-  }
-  return { w: raw.w / (max.w || 1), d: raw.d / (max.d || 1), c: raw.c / (max.c || 1) };
-}
-
-/** Blend in a skin sample from a photo: it informs warmth and depth, never chroma. */
-export function blendPhoto(scores: Scores, photo: { w: number; d: number } | null, weight = 0.3): Scores {
-  if (!photo) return scores;
-  return {
-    w: scores.w * (1 - weight) + photo.w * weight,
-    d: scores.d * (1 - weight) + photo.d * weight,
-    c: scores.c,
-  };
-}
-
-export function seasonFromScores({ w, d, c }: Scores): string {
-  const warm = w >= 0;
-  const dominant = (
-    [
-      ["w", Math.abs(w)],
-      ["d", Math.abs(d)],
-      ["c", Math.abs(c)],
-    ] as const
-  ).reduce((best, cur) => (cur[1] > best[1] ? cur : best))[0];
-
-  if (dominant === "w") {
-    if (warm) return c - d >= 0 ? "warm-spring" : "warm-autumn";
-    return c + d >= 0 ? "cool-winter" : "cool-summer";
-  }
-  if (dominant === "d") {
-    if (d >= 0) return warm ? "deep-autumn" : "deep-winter";
-    return warm ? "light-spring" : "light-summer";
-  }
-  if (c >= 0) return warm ? "bright-spring" : "bright-winter";
-  return warm ? "soft-autumn" : "soft-summer";
-}
-
-export function describe({ w, d, c }: Scores) {
-  const undertone = Math.abs(w) < 0.12 ? "Neutral" : w > 0 ? "Warm" : "Cool";
-  const depth = d < -0.25 ? "Light" : d > 0.25 ? "Deep" : "Medium";
-  const contrast = c < -0.25 ? "Low" : c > 0.25 ? "High" : "Medium";
-  return { undertone, depth, contrast };
-}
-
-export const struggleTips: Record<string, { title: string; body: (s: { name: string; neutrals: string; top: string[] }) => string }> = {
+export const struggleTips: Record<string, StruggleTip> = {
   tired: {
     title: "Banish the tired look",
     body: (s) => `Keep ${s.top.join(", ")} closest to your face — tops, scarves and lipstick. They're picked to brighten your skin, while off-palette shades can sit lower on your body.`,
@@ -415,14 +306,3 @@ export const struggleTips: Record<string, { title: string; body: (s: { name: str
   },
 };
 
-/** Rough perceptual distance between two hex colors (redmean approximation). */
-export function colorDistance(a: string, b: string) {
-  const p = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-  const [r1, g1, b1] = p(a);
-  const [r2, g2, b2] = p(b);
-  const rm = (r1 + r2) / 2;
-  const dr = r1 - r2;
-  const dg = g1 - g2;
-  const db = b1 - b2;
-  return Math.sqrt((2 + rm / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rm) / 256) * db * db);
-}

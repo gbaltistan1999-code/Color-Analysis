@@ -1,5 +1,5 @@
 import { useId } from "react";
-import type { Visual } from "@/lib/quiz";
+import type { Visual } from "@/types";
 
 /** Original SVG illustrations for quiz answer tiles. All fill their container. */
 

@@ -1,4 +1,4 @@
-import { seasons } from "@/lib/seasons";
+import { seasons } from "@/data/seasons";
 
 /** Annular sector path between radii r0..r1 and angles a0..a1 (radians). */
 function sector(cx: number, cy: number, r0: number, r1: number, a0: number, a1: number) {

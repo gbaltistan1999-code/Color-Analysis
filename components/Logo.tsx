@@ -1,7 +1,5 @@
 import Link from "next/link";
-
-export { SITE_NAME } from "@/lib/site";
-import { SITE_NAME } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site-config";
 
 /** Original mark: a six-petal color wheel around a white center. */
 export function LogoMark({ size = 36 }: { size?: number }) {
@@ -31,7 +29,7 @@ export function Logo() {
     <Link href="/" className="flex items-center gap-2 rounded-lg" aria-label={`${SITE_NAME} home`}>
       <LogoMark />
       <span className="font-display text-xl font-extrabold tracking-tight text-ink">
-        Hue<span className="text-primary">Muse</span>
+        Color <span className="text-primary">Analysis</span>
       </span>
     </Link>
   );

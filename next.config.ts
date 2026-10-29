@@ -12,8 +12,18 @@ const nextConfig: NextConfig = {
     // Our layouts never render images wider than ~1200px; skip generating huge variants.
     deviceSizes: [384, 640, 750, 828, 1080, 1200],
   },
+  // Permanent redirects for URLs that moved, so old links and search results keep working.
   async redirects() {
-    return [{ source: "/undertone-test", destination: "/skin-undertone-test", permanent: true }];
+    return [
+      { source: "/quiz", destination: "/#quiz", permanent: true },
+      { source: "/undertone-test", destination: "/skin-undertone-test", permanent: true },
+      { source: "/privacy", destination: "/privacy-policy", permanent: true },
+      { source: "/terms", destination: "/terms-and-conditions", permanent: true },
+      { source: "/seasons/warm-spring", destination: "/seasons/true-spring", permanent: true },
+      { source: "/seasons/cool-summer", destination: "/seasons/true-summer", permanent: true },
+      { source: "/seasons/warm-autumn", destination: "/seasons/true-autumn", permanent: true },
+      { source: "/seasons/cool-winter", destination: "/seasons/true-winter", permanent: true },
+    ];
   },
 };
 

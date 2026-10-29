@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { comparisons, getComparison } from "@/lib/compare";
-import { getSeason, seasonPhoto, type Season } from "@/lib/seasons";
-import { SITE_URL, jsonLd } from "@/lib/site";
+import { comparisons, getComparison } from "@/data/comparisons";
+import { getSeason, seasonPhoto } from "@/lib/seasons";
+import type { Season } from "@/types";
+import { SITE_URL } from "@/lib/site-config";
+import { jsonLd, pageMetadata } from "@/lib/seo";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { IconArrow, IconCheck } from "@/components/Icons";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -16,7 +19,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const c = getComparison((await params).slug);
   if (!c) return {};
-  return { title: c.metaTitle, description: c.description, alternates: { canonical: `/compare/${c.slug}` } };
+  return pageMetadata({ title: c.metaTitle, description: c.description, path: `/compare/${c.slug}` });
 }
 
 function SeasonColumn({ season }: { season: Season }) {
@@ -78,12 +81,14 @@ export default async function ComparePage({ params }: Props) {
       />
       <section style={{ background: "var(--grad-hero)" }}>
         <div className="container-x max-w-3xl py-14 text-center">
-          <nav aria-label="Breadcrumb" className="text-sm text-muted">
-            <Link href="/seasons" className="font-semibold text-primary hover:underline">
-              Seasons
-            </Link>{" "}
-            / Compare
-          </nav>
+          <div className="flex justify-center">
+            <Breadcrumbs
+              items={[
+                { name: "Seasons", path: "/seasons" },
+                { name: c.title, path: `/compare/${c.slug}` },
+              ]}
+            />
+          </div>
           <h1 className="mt-3 text-4xl font-extrabold sm:text-5xl">{c.title}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-muted">{c.intro}</p>
         </div>
@@ -162,7 +167,7 @@ export default async function ComparePage({ params }: Props) {
           <h2 className="text-2xl font-extrabold sm:text-3xl">Still not sure? Let the quiz decide 🎨</h2>
           <p className="mx-auto mt-3 max-w-lg text-white/90">Free, about 3 minutes, no signup — with an optional private selfie check.</p>
           <Link
-            href="/quiz"
+            href="/#quiz"
             className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 font-bold text-[#6D28D9] shadow-xl transition hover:-translate-y-0.5"
           >
             Take the free color analysis quiz <IconArrow className="h-5 w-5" />

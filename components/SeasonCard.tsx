@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { seasonPhoto, type Family, type Season } from "@/lib/seasons";
+import { seasonPhoto } from "@/lib/seasons";
+import type { Family, Season } from "@/types";
 import { IconArrow } from "./Icons";
 
 // Pill colors chosen for ≥4.5:1 contrast with white text.

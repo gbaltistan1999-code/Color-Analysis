@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Poppins } from "next/font/google";
 import Header from "@/components/Header";
+import CookieConsent from "@/components/CookieConsent";
 import Footer from "@/components/Footer";
-import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { OG_IMAGE } from "@/lib/seo";
+import { SITE_NAME, SITE_URL, siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
 const body = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-body", display: "swap" });
@@ -15,24 +17,14 @@ const heading = Poppins({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: {
-    default: "Free Color Analysis Online — 100% Free, No Signup",
-    template: `%s | ${SITE_NAME}`,
-  },
-  description:
-    "Free color analysis online: find your color season, skin undertone and personal color palette with HEX codes in 3 minutes. 100% free, no signup, photos never leave your device.",
-  openGraph: {
-    type: "website",
-    siteName: SITE_NAME,
-    title: "Free Color Analysis Online — 100% Free, No Signup",
-    description: "Find your color season, undertone and personal palette in 3 minutes. No signup.",
-    images: [{ url: "/images/season-map.jpg", width: 1200, height: 1000, alt: "The 12 color seasons" }],
-  },
+  title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
+  description: siteConfig.description,
+  openGraph: { type: "website", siteName: SITE_NAME, images: [OG_IMAGE] },
   twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#7C3AED",
+  themeColor: siteConfig.themeColor,
   width: "device-width",
   initialScale: 1,
 };
@@ -52,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <Footer />
+        <CookieConsent />
       </body>
     </html>
   );

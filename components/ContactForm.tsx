@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 
-// TODO: replace with your real inbox before launch.
-export const CONTACT_EMAIL = "hello@example.com";
+import { siteConfig } from "@/lib/site-config";
+
+const CONTACT_EMAIL = siteConfig.contactEmail;
 
 /** No backend: composes a message in the visitor's own email app. */
 export default function ContactForm() {
@@ -52,6 +53,10 @@ export default function ContactForm() {
           className={field}
         />
       </div>
+      <p className="rounded-xl bg-surface-2 p-3 text-sm text-muted">
+        This form doesn&apos;t send anything from the website. It opens your own email app with your message filled in —
+        you then press send there.
+      </p>
       <button type="submit" className="btn-primary w-full sm:w-auto">
         Open in my email app
       </button>

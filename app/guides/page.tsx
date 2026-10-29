@@ -1,12 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { PaletteStrip } from "@/components/Illustrations";
+import { SITE_URL } from "@/lib/site-config";
+import { jsonLd, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Color Analysis Guides",
-  description: "Beginner-friendly guides to undertones, contrast, depth and doing a drape test at home.",
-  alternates: { canonical: "/guides" },
-};
+export const metadata = pageMetadata({
+  title: "Color Analysis Guides: Undertones, Contrast & Drape Tests",
+  description:
+    "Beginner-friendly color analysis guides: warm vs cool undertones, depth and contrast, how to do a drape test at home and how to use your palette.",
+  path: "/guides",
+});
 
 const guides = [
   {
@@ -55,8 +58,20 @@ const guides = [
 export default function GuidesPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={jsonLd({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: "Color Analysis Guides: Undertones, Contrast & Drape Tests",
+          mainEntityOfPage: `${SITE_URL}/guides`,
+        })}
+      />
       <section style={{ background: "var(--grad-hero)" }}>
-        <div className="container-x py-14 text-center">
+        <div className="container-x py-14">
+          <Breadcrumbs items={[{ name: "Guides", path: "/guides" }]} />
+        </div>
+        <div className="container-x pb-14 text-center">
           <span className="eyebrow">📚 Learn the basics</span>
           <h1 className="mt-4 text-4xl font-extrabold sm:text-5xl">Color Analysis Guides</h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted">
@@ -97,7 +112,7 @@ export default function GuidesPage() {
           <div className="card p-6 text-center sm:p-8">
             <h2 className="text-2xl font-bold">Ready to put it into practice?</h2>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link href="/quiz" className="btn-primary">
+              <Link href="/#quiz" className="btn-primary">
                 Take the Quiz
               </Link>
               <Link href="/skin-undertone-test" className="btn-ghost">
