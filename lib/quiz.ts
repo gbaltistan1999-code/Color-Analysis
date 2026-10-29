@@ -170,10 +170,10 @@ export const questions: Question[] = [
     select: "single",
     layout: "tiles",
     answers: [
-      { id: "crisp", label: "Crisp bright white", delta: { w: -1, c: 1 }, visual: { kind: "tee", colors: ["#FFFFFF"] } },
-      { id: "cream", label: "Soft cream", delta: { w: 1, c: -1 }, visual: { kind: "tee", colors: ["#F3E6CC"] } },
-      { id: "both", label: "Both work", delta: {}, visual: { kind: "tee", colors: ["#FFFFFF", "#F3E6CC"] } },
-      { id: "unsure", label: "Not sure", delta: {}, visual: { kind: "text", text: "🤔" } },
+      { id: "crisp", label: "Crisp bright white", delta: { w: -1, c: 1 }, image: "/images/quiz/white-crisp.jpg", visual: { kind: "tee", colors: ["#FFFFFF"] } },
+      { id: "cream", label: "Soft cream", delta: { w: 1, c: -1 }, image: "/images/quiz/white-cream.jpg", visual: { kind: "tee", colors: ["#F3E6CC"] } },
+      { id: "both", label: "Both work", delta: {}, image: "/images/quiz/white-both.jpg", visual: { kind: "tee", colors: ["#FFFFFF", "#F3E6CC"] } },
+      { id: "unsure", label: "Not sure", delta: {}, visual: { kind: "text", text: "I'm not sure" } },
     ],
   },
 

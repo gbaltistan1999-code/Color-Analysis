@@ -253,7 +253,11 @@ export default function QuizVisual({ visual }: { visual: Visual }) {
       return <Pair colors={visual.colors} />;
     case "text":
       return (
-        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#F6EFE8] to-[#EDE3F7] text-5xl" aria-hidden="true">
+        <div
+          className="flex h-full w-full items-center justify-center p-4 text-center font-display text-2xl font-bold leading-tight text-[#2A2420] sm:text-3xl"
+          style={{ background: "radial-gradient(circle at 30% 20%, #FFFFFF 0%, #F6F0E7 45%, #EFE5D6 100%)" }}
+          aria-hidden="true"
+        >
           {visual.text}
         </div>
       );
