@@ -181,8 +181,16 @@ function Intro({ onStart }: { onStart: () => void }) {
         Answer a few easy questions about your natural coloring and style, and we&apos;ll match you to one of 12 seasons
         — with a palette made for you.
       </p>
-      <div className="mt-6 flex justify-center">
-        <SeasonWheel size={240} />
+      <div className="mt-6 overflow-hidden rounded-2xl bg-white ring-1 ring-line">
+        <Image
+          src="/images/season-map.jpg"
+          alt="Map of the 12 color seasons: Winter is cool and bright, Spring is warm and bright, Summer is cool and soft, Autumn is warm and soft, with example portraits and palettes for each season"
+          width={1200}
+          height={1000}
+          priority
+          sizes="(min-width: 672px) 610px, 100vw"
+          className="h-auto w-full"
+        />
       </div>
       <button type="button" onClick={onStart} className="btn-primary mt-8 w-full !py-4 text-lg sm:w-auto sm:!px-12">
         Start the quiz <IconArrow className="h-5 w-5" />
@@ -255,7 +263,14 @@ function QuestionScreen({
     onChange(without.includes(id) ? without.filter((s) => s !== id) : [...without, id]);
   };
 
-  const cols = q.layout === "list" ? "" : q.answers.length > 4 ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-2";
+  const cols =
+    q.layout === "list"
+      ? ""
+      : q.answers.length > 6
+        ? "grid-cols-2 sm:grid-cols-4"
+        : q.answers.length > 4
+          ? "grid-cols-2 sm:grid-cols-3"
+          : "grid-cols-2";
 
   return (
     <div className="card animate-reveal p-5 sm:p-8">
@@ -276,7 +291,7 @@ function QuestionScreen({
                   type="button"
                   aria-pressed={on}
                   onClick={() => pick(a.id)}
-                  className={`group relative overflow-hidden rounded-2xl text-left transition hover:-translate-y-0.5 ${
+                  className={`group relative flex flex-col overflow-hidden rounded-2xl text-left transition hover:-translate-y-0.5 ${
                     on ? "ring-4 ring-[#7C3AED]" : "ring-1 ring-line hover:ring-2 hover:ring-[#7C3AED]"
                   }`}
                 >
@@ -287,7 +302,7 @@ function QuestionScreen({
                       a.visual && <QuizVisual visual={a.visual} />
                     )}
                   </div>
-                  <span className="flex items-center gap-2.5 bg-[#1e1433] px-3 py-2.5 text-sm font-semibold text-white">
+                  <span className="flex flex-1 items-center gap-2.5 bg-[#1e1433] px-3 py-2.5 text-sm font-semibold leading-snug text-white">
                     {a.swatch && (
                       <span className="h-6 w-6 shrink-0 rounded-full ring-2 ring-white/70" style={{ background: a.swatch }} aria-hidden="true" />
                     )}
