@@ -12,6 +12,15 @@ const nextConfig: NextConfig = {
     // Our layouts never render images wider than ~1200px; skip generating huge variants.
     deviceSizes: [384, 640, 750, 828, 1080, 1200],
   },
+  // Quiz tiles are served as-is (no optimizer), so give them the same one-day browser cache.
+  async headers() {
+    return [
+      {
+        source: "/images/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
+    ];
+  },
   // Permanent redirects for URLs that moved, so old links and search results keep working.
   async redirects() {
     return [

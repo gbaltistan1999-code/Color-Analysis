@@ -47,8 +47,8 @@ const TILE_SIZES = "(min-width: 640px) 220px, 50vw";
 const RESULT_SIZES = "(min-width: 640px) 320px, 100vw";
 
 /** Fetch an image with the same srcset/sizes the <Image> will use, so the browser reuses it. */
-function preloadImage(src: string, sizes: string) {
-  const { props } = getImageProps({ src, alt: "", fill: true, sizes });
+function preloadImage(src: string, sizes: string, unoptimized = false) {
+  const { props } = getImageProps({ src, alt: "", fill: true, sizes, unoptimized });
   const img = new window.Image();
   img.decoding = "async";
   if (props.sizes) img.sizes = props.sizes;
@@ -73,11 +73,21 @@ export default function Quiz() {
   const moved = useRef(false);
   const step = steps[index];
 
-  // Warm the cache for the next picture question so its tiles appear instantly.
+  // Warm the cache for the next two picture questions so tiles appear instantly, even when
+  // answers are tapped quickly. Runs when the browser is idle so it never delays the page.
   useEffect(() => {
-    const upcoming = steps.slice(index + 1).find((s) => s.t === "question");
-    if (upcoming?.t !== "question") return;
-    for (const a of upcoming.q.answers) if (a.image) preloadImage(a.image, TILE_SIZES);
+    const upcoming = steps
+      .slice(index + 1)
+      .filter((s): s is Extract<Step, { t: "question" }> => s.t === "question" && s.q.answers.some((a) => a.image))
+      .slice(0, 2);
+    const run = () => upcoming.forEach((s) => s.q.answers.forEach((a) => a.image && preloadImage(a.image, TILE_SIZES, true)));
+    // Safari lacks requestIdleCallback; fall back to a short timeout there.
+    if (typeof window.requestIdleCallback === "function") {
+      const handle = window.requestIdleCallback(run, { timeout: 1500 });
+      return () => window.cancelIdleCallback(handle);
+    }
+    const t = setTimeout(run, 200);
+    return () => clearTimeout(t);
   }, [index]);
 
   // While "analyzing" runs, fetch the result photo so the reveal has no blank frame.
@@ -328,7 +338,8 @@ function QuestionScreen({
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-surface-2">
                     {a.image ? (
-                      <Image src={a.image} alt="" fill sizes={TILE_SIZES} className="object-cover object-top" />
+                      // Tiles are pre-sized WebP files (~10 KB), so they skip the on-the-fly optimizer.
+                      <Image src={a.image} alt="" fill unoptimized sizes={TILE_SIZES} className="object-cover object-top" />
                     ) : (
                       a.visual && <QuizVisual visual={a.visual} />
                     )}
