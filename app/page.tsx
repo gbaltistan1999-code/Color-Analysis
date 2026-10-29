@@ -261,7 +261,7 @@ export default function Home() {
             </h2>
             <p className="mt-4 text-lg text-muted">Every season has its own mood. Tap one to explore its full palette.</p>
           </div>
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {seasons.map((s) => (
               <SeasonCard key={s.slug} season={s} />
             ))}
