@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { DrapedFace, PaletteStrip } from "@/components/Illustrations";
+import { PaletteStrip } from "@/components/Illustrations";
 import SeasonCard from "@/components/SeasonCard";
-import { getSeason, seasons } from "@/lib/seasons";
+import { getSeason, seasonPhoto, seasons } from "@/lib/seasons";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -25,6 +26,7 @@ export default async function SeasonPage({ params }: Props) {
   if (!season) notFound();
 
   const siblings = seasons.filter((s) => s.family === season.family && s.slug !== season.slug);
+  const photo = seasonPhoto(season);
 
   return (
     <>
@@ -56,14 +58,24 @@ export default async function SeasonPage({ params }: Props) {
               ))}
             </dl>
           </div>
-          <div className="mx-auto w-full max-w-xs">
-            <DrapedFace
-              drape={season.palette[0].hex}
-              drapeShade={season.palette[1].hex}
-              mood="glow"
-              title={`Illustration wearing a ${season.palette[0].name} drape`}
-            />
-          </div>
+          <figure className="mx-auto w-full max-w-xs">
+            <div
+              className="rounded-[2rem] p-1.5 shadow-2xl"
+              style={{ background: `linear-gradient(135deg, ${season.palette.slice(0, 4).map((p) => p.hex).join(", ")})` }}
+            >
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.65rem]">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  priority
+                  sizes="320px"
+                  className={`object-cover ${photo.position}`}
+                />
+              </div>
+            </div>
+            <PaletteStrip colors={season.palette.map((p) => p.hex)} className="mx-auto mt-4 h-3 w-3/4" />
+          </figure>
         </div>
       </section>
 

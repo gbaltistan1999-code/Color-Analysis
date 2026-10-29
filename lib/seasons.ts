@@ -530,17 +530,32 @@ export const familyExtras: Record<Family, { hair: string; accessories: string }>
 };
 
 /**
- * Result-page photos. Add a per-season photo (e.g. "soft-autumn") or a per-family one
- * (e.g. "Autumn") under /public/images/seasons/ and list it here; otherwise the hero photo is used.
+ * Portraits for result cards and season pages, keyed by season slug or family.
+ * Seasons without their own photo fall back to their family's, then to the hero photo.
+ * All photos are 720×1073 portraits in /public/images/seasons/.
  */
-const seasonPhotos: Partial<Record<string, { src: string; alt: string; position?: string }>> = {};
+const portrait = (slug: string, alt: string) => ({ src: `/images/seasons/${slug}.jpg`, alt });
+
+const seasonPhotos: Partial<Record<string, { src: string; alt: string; position?: string }>> = {
+  "cool-winter": portrait("cool-winter", "Woman with black hair and blue eyes in a crisp white ruffled collar"),
+  "bright-winter": portrait("bright-winter", "Woman with black hair and vivid blue eyes wearing cobalt blue"),
+  "deep-autumn": portrait("deep-autumn", "Woman with dark wavy hair and brown eyes wearing deep burgundy"),
+  "warm-autumn": portrait("warm-autumn", "Woman with auburn hair in golden light wearing rust"),
+  "light-summer": portrait("light-summer", "Woman with ash blonde hair and blue eyes wearing soft light blue"),
+  "soft-summer": portrait("soft-summer", "Woman with ash brown hair wearing a dusty pink blouse"),
+  "warm-spring": portrait("warm-spring", "Smiling woman with strawberry blonde hair wearing coral"),
+};
+seasonPhotos.Winter = seasonPhotos["cool-winter"];
+seasonPhotos.Autumn = seasonPhotos["warm-autumn"];
+seasonPhotos.Summer = seasonPhotos["light-summer"];
+seasonPhotos.Spring = seasonPhotos["warm-spring"];
 
 export function seasonPhoto(season: Season) {
   const p = seasonPhotos[season.slug] ?? seasonPhotos[season.family];
   return {
     src: p?.src ?? "/images/hero.jpg",
     alt: p?.alt ?? "Smiling woman holding a fan of color swatches",
-    position: p?.position ?? "object-[80%_30%]",
+    position: p?.position ?? "object-[50%_25%]",
   };
 }
 
