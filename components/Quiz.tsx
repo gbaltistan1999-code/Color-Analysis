@@ -73,9 +73,12 @@ export default function Quiz() {
     } catch {}
   }, []);
 
+  // Save progress mid-quiz; once results are reached, clear it so a refresh starts fresh.
   useEffect(() => {
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ index, answers }));
+      const finished = steps[index].t === "analyzing" || steps[index].t === "result";
+      if (finished) sessionStorage.removeItem(STORAGE_KEY);
+      else sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ index, answers }));
     } catch {}
   }, [index, answers]);
 
