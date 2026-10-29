@@ -700,7 +700,7 @@ function ResultHero({
 
   return (
     <section
-      className="card animate-reveal relative overflow-hidden !border-0 dark:!bg-surface"
+      className="card animate-reveal relative overflow-hidden !border-0"
       style={{ background: theme.bg }}
       aria-labelledby="result-title"
     >
@@ -708,18 +708,17 @@ function ResultHero({
       <div className="relative h-60 sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto sm:w-[46%]">
         <Image src={photo.src} alt={photo.alt} fill priority sizes="(min-width: 640px) 320px, 100vw" className={`object-cover ${photo.position}`} />
         <div
-          className="absolute inset-0 hidden sm:block dark:!hidden"
+          className="absolute inset-0 hidden sm:block"
           style={{ background: `linear-gradient(90deg, ${theme.bg} 0%, ${theme.bg}00 45%)` }}
         />
         <div
-          className="absolute inset-0 sm:hidden dark:!hidden"
+          className="absolute inset-0 sm:hidden"
           style={{ background: `linear-gradient(0deg, ${theme.bg} 0%, ${theme.bg}00 40%)` }}
         />
-        <div className="absolute inset-0 hidden bg-gradient-to-t from-[var(--surface)] to-transparent to-40% dark:block sm:dark:bg-gradient-to-r" />
       </div>
 
       <div className="relative p-6 sm:w-[64%] sm:p-8">
-        <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.18em] text-muted sm:text-sm">
+        <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6B6152] sm:text-sm">
           <span className="h-px w-8 bg-current opacity-50 sm:w-12" />
           Your color season is
           <span className="h-px w-8 bg-current opacity-50 sm:w-12" />
@@ -727,7 +726,7 @@ function ResultHero({
         <h2
           id="result-title"
           tabIndex={-1}
-          className="mt-4 inline-flex items-center gap-3 rounded-2xl border-2 bg-white/50 px-4 py-2 text-4xl font-extrabold outline-none sm:text-5xl dark:!border-line dark:!text-ink dark:bg-white/5"
+          className="mt-4 inline-flex items-center gap-3 rounded-2xl border-2 bg-white/50 px-4 py-2 text-4xl font-extrabold outline-none sm:text-5xl"
           style={{ color: theme.ink, borderColor: theme.line }}
         >
           <span aria-hidden="true" className="text-3xl sm:text-4xl">
@@ -735,7 +734,7 @@ function ResultHero({
           </span>
           {season.name}
         </h2>
-        <p className="mt-3 text-lg font-semibold text-muted">{season.tagline}</p>
+        <p className="mt-3 text-lg font-semibold text-[#6B6152]">{season.tagline}</p>
 
         <div className="mt-4 flex h-5 max-w-sm overflow-hidden rounded-full" aria-hidden="true">
           {season.palette.map((p) => (
@@ -743,7 +742,7 @@ function ResultHero({
           ))}
         </div>
 
-        <p className="mt-4 max-w-md text-sm leading-relaxed text-ink/80 sm:text-base">{season.description}</p>
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-[#3A3328] sm:text-base">{season.description}</p>
       </div>
 
       <div className="relative px-6 pb-6 sm:px-8 sm:pb-8">
@@ -784,11 +783,11 @@ function ResultHero({
 
 function TraitCard({ label, value, children }: { label: string; value: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white/70 p-3 backdrop-blur-sm dark:border-line dark:bg-surface-2">
+    <div className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white/70 p-3 backdrop-blur-sm">
       <span className="flex h-11 w-11 shrink-0 items-center justify-center">{children}</span>
       <div>
-        <dt className="text-[11px] font-bold uppercase tracking-wider text-muted">{label}</dt>
-        <dd className="text-lg font-bold text-ink">{value}</dd>
+        <dt className="text-[11px] font-bold uppercase tracking-wider text-[#6B6152]">{label}</dt>
+        <dd className="text-lg font-bold text-[#1F1B16]">{value}</dd>
       </div>
     </div>
   );
