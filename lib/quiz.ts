@@ -251,6 +251,22 @@ export const questions: Question[] = [
 
   // ── Phase 3: Color Habits ─────────────────────────────────────────────
   {
+    id: "look",
+    phase: 3,
+    title: "Which look feels most like you?",
+    helper: "Picture yourself walking out the door in it.",
+    select: "single",
+    layout: "tiles",
+    answers: [
+      { id: "bright", label: "Bright & bold", delta: { c: 2 }, image: "/images/quiz/look-bright.jpg", swatch: "#F2575A" },
+      { id: "deep", label: "Deep & rich", delta: { d: 2, c: 0.5 }, image: "/images/quiz/look-deep.jpg", swatch: "#6E1A2C" },
+      { id: "cool", label: "Cool elegant", delta: { w: -1.5, c: -0.5 }, image: "/images/quiz/look-cool.jpg", swatch: "#7F9CCB" },
+      { id: "earthy", label: "Warm earthy", delta: { w: 1.5, d: 0.5, c: -0.5 }, image: "/images/quiz/look-earthy.jpg", swatch: "#A9562F" },
+      { id: "classic", label: "Clean classic", delta: { c: 1.5, w: -0.5 }, image: "/images/quiz/look-classic.jpg", swatch: "#F7F7F5" },
+      { id: "soft", label: "Soft muted", delta: { c: -2 }, image: "/images/quiz/look-soft.jpg", swatch: "#B9939A" },
+    ],
+  },
+  {
     id: "accents",
     phase: 3,
     title: "Which accent colors would you happily wear?",
