@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   openGraph: { type: "website", siteName: SITE_NAME, images: [OG_IMAGE] },
   twitter: { card: "summary_large_image" },
+  verification: { google: siteConfig.googleSiteVerification },
 };
 
 export const viewport: Viewport = {

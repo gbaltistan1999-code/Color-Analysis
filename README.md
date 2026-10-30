@@ -20,7 +20,7 @@ npm run build && npm start
 
 Any Node host works; Vercel needs no configuration. Before launch:
 
-1. **Set your domain** in `lib/site-config.ts` (`url`). Canonicals, sitemap, robots.txt and social previews use it. It is currently the placeholder `https://www.example.com`.
+1. **Set your domain** in `lib/site-config.ts` (`url`). Canonicals, sitemap, robots.txt and social previews use it. It is set to `https://www.coloranalyses.app`.
 2. **Legal review:** the Privacy Policy and Terms contain `OWNER REVIEW` comments. Confirm your hosting provider, add a governing-law clause, and have the jurisdiction-specific sections (UK GDPR, PIPEDA, Australian Privacy Act, US state laws) checked by a qualified adviser.
 3. **Image rights:** confirm you own or have a license for every photo in `public/images/`.
 4. **Search Console:** submit `/sitemap.xml` after deploying.

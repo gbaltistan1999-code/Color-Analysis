@@ -4,14 +4,13 @@
  */
 export const siteConfig = {
   name: "Color Analysis",
-  /**
-   * TODO before launch: replace with your real domain (no trailing slash).
-   * Canonical URLs, the sitemap, robots.txt and social previews all use it.
-   */
-  url: "https://www.example.com",
+  /** Live domain (no trailing slash). Canonical URLs, the sitemap, robots.txt and social previews all use it. */
+  url: "https://www.coloranalyses.app",
   description:
     "Free color analysis quiz: find your color season, skin undertone and personal palette in about 3 minutes. No signup — answers and photos stay on your device.",
   contactEmail: "eshfaqihmed@gmail.com",
+  /** Google Search Console ownership token (rendered as <meta name="google-site-verification">). */
+  googleSiteVerification: "-qzp7JjV3gFdnS4fYDZm4DjVWkaxcuv1y1R9hCbutX8",
   themeColor: "#7C3AED",
   /** Main navigation (header). */
   nav: [
