@@ -160,7 +160,7 @@ export default function Home() {
           <div>
             <span className="eyebrow">🎨 Free seasonal color analysis</span>
             <h1 className="mt-5 text-4xl font-extrabold leading-tight text-ink sm:text-5xl lg:text-6xl">
-              Color Analysis: find the colors that make you <span className="text-primary">glow</span>
+              Free Online Color Analysis – Find the Colors That Make You <span className="text-primary">Glow</span>
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-relaxed text-muted">
               Answer a handful of playful questions and we&apos;ll match you to one of 12 color seasons — complete with a
